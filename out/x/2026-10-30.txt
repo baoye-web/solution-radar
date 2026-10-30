@@ -1,4 +1,4 @@
-n8n-io/n8n · 209,090★
+n8n-io/n8n · 209,094★
 
 Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host 
 
@@ -9,7 +9,7 @@ Fair-code workflow automation platform with native AI capabilities. Combine visu
 
 ---
 
-langgenius/dify · 159,977★
+langgenius/dify · 159,983★
 
 Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one collaborative workspace. Deploy on cl
 
@@ -20,11 +20,11 @@ Build Agentic workflows, RAG pipelines, with rich AI model and tool support on o
 
 ---
 
-xerj-org/xerj · 17,613★
+maximhq/bifrost · 9,214★
 
-AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM
+Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 
 许可证：可商用
 可考虑：先验证一个具体场景能否跑通
 
-→ https://github.com/xerj-org/xerj
+→ https://github.com/maximhq/bifrost
