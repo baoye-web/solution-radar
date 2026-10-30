@@ -126,7 +126,7 @@ except Exception:
     echo "[$(date +%H:%M:%S)] 第 $N 次探测：$STATE"
     LAST_STATE="$STATE"
   elif [ $((N % 8)) -eq 0 ]; then
-    echo "[$(date +%H:%M:%S)] 第 $N 次探测：仍在等待（$STATE）"
+    echo "[$(date +%H:%M:%S)] 第 $N 次探测：仍在等待（${STATE}）"
   fi
   sleep "$INTERVAL"
 done
