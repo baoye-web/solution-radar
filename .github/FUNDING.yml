@@ -1,0 +1,5 @@
+# GitHub Sponsors —— 无需任何第三方认证的收入通道
+# 开通路径：GitHub 个人主页 → Sponsors → 启用（需绑定 Stripe 或 PayPal）
+# 金额由 GitHub 直接结算，不经过 WorkBuddy 平台
+github: ["baoye-web"]
+custom: ["https://baoye-web.github.io/solution-radar/"]

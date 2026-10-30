@@ -87,9 +87,34 @@ python3 radar/publish.py --in data/entries.json --outdir site --reports reports 
 
 ## 自动化
 
-`.github/workflows/radar-daily.yml` 每天 UTC 01:47 自动跑完整链路：采集 → 评分 → 渲染 → 提交 → 部署 GitHub Pages。
+`.github/workflows/radar-daily.yml` 每天 UTC 01:47 自动跑完整链路：采集 → 评分 → 渲染 → 生成分发文案 → 提交 → 部署 GitHub Pages。
 
 失败时会把 `data/` 与 `reports/` 作为 artifact 留存 7 天，方便事后排查而不是"什么都没发生"。
+
+### 分发层
+
+`radar/distribute.py` 把当日清单渲染成四个平台可直接发布的文案：
+
+| 平台 | 形态 | 切入角度 |
+|---|---|---|
+| X | 3 条独立短帖，每条聚焦一个方案 | 单方案深挖，带可点开链接 |
+| 知乎 | 结构化长文 | 授权边界对比 + 完整清单 |
+| 小红书 | 避坑向短文 | 「这几个别用，这几个放心用」 |
+| 微博 | 单条 | 当日最值得看的一个 |
+
+```bash
+python3 radar/distribute.py --in data/entries.json --out out --pick 6
+```
+
+**刻意不做的事**：不生成通用清单体（已被证实是红海），每条内容必须带可核验的具体数字。
+
+### 收入通道
+
+| 通道 | 需要认证 | 说明 |
+|---|---|---|
+| **GitHub Sponsors** | 绑 Stripe/PayPal | `.github/FUNDING.yml` 已配置。GitHub 直接结算，**不经过 WorkBuddy 平台** |
+| **WorkBuddy 付费 Skill** | 实名 + 微信签约 | 见 [上架操作手册](docs/上架操作手册.md) |
+| **付费数据 API** | 实名 | 未来把 `site/feed.json` 包成订阅接口 |
 
 ## 作为 Skill 使用
 
@@ -97,15 +122,22 @@ python3 radar/publish.py --in data/entries.json --outdir site --reports reports 
 
 ```bash
 # 本地预检 + 打包（不上传）
-python3 solution-radar/scripts/publish-to-openplatform.py --skill-dir ./solution-radar --dry-run
+ego-browser nodejs < solution-radar/scripts/publish.mjs
 
-# 真实上架（需先设置登录态）
-export WB_COOKIE='...'
-export WB_PARTY_ID='...'
-python3 solution-radar/scripts/publish-to-openplatform.py --skill-dir ./solution-radar --submit
+# 真实上架（含 --wait 会在实名认证完成后自动继续）
+ego-browser nodejs < solution-radar/scripts/publish.mjs -- --submit --publish --price 19 --monthly
+```
+
+或者用守护进程（认证完成后自动接手，无需你再操作）：
+
+```bash
+bash scripts/auto-publish.sh --daemon --timeout=7200 --interval=25
+tail -f ~/ego/auto-income-20261030/daemon.log
 ```
 
 脚本会做本地预检（8 个必填 frontmatter 字段、目录结构、体积、脚本执行位），**预检不过就不浪费一轮审核**。
+
+> **技术约束**：上架链路必须在浏览器上下文中执行（`page.fetch`）。实测从 Chrome 提取的 httpOnly `session` cookie 在浏览器外用 urllib 直连会被重定向到 Keycloak 登录页，同一份 cookie 在页面上下文里完全正常。
 
 ## 项目结构
 

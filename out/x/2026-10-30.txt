@@ -1,0 +1,30 @@
+n8n-io/n8n · 209,090★
+
+Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host 
+
+许可证：商用受限
+谨慎使用：许可证允许自用但限制对外服务/转售，商用前需确认条款边界
+
+→ https://github.com/n8n-io/n8n
+
+---
+
+langgenius/dify · 159,977★
+
+Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one collaborative workspace. Deploy on cl
+
+许可证：商用受限
+谨慎使用：许可证允许自用但限制对外服务/转售，商用前需确认条款边界
+
+→ https://github.com/langgenius/dify
+
+---
+
+xerj-org/xerj · 17,613★
+
+AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM
+
+许可证：可商用
+可考虑：先验证一个具体场景能否跑通
+
+→ https://github.com/xerj-org/xerj

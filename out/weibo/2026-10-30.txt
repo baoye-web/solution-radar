@@ -1,0 +1,8 @@
+2026-10-30 今日开源方案雷达（6 条）
+
+最值得看：n8n-io/n8n（209,090★）
+Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host 
+授权：商用受限
+→ https://github.com/n8n-io/n8n
+
+全清单：https://baoye-web.github.io/solution-radar/

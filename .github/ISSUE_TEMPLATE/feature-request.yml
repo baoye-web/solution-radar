@@ -1,0 +1,25 @@
+name: 垂类建议
+description: 建议雷达扫描哪个垂类（可带具体需求）
+title: "[垂类] "
+labels: ["需求"]
+body:
+  - type: input
+    id: vertical
+    attributes:
+      label: 垂类 / topic
+      description: 例如 ai-agent、mcp-server、llm-agent、privacy-tool
+      placeholder: ai-agent
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 你想解决的具体问题
+      description: 越具体越好，避免"推荐点好用的工具"这类无法定位的描述
+    validations:
+      required: true
+  - type: input
+    id: threshold
+    attributes:
+      label: 最小 star 阈值
+      default: "800"
