@@ -88,7 +88,9 @@ LAST_STATE=""
 
 while [ "$(date +%s)" -lt "$DEADLINE" ]; do
   N=$((N+1))
-  RAW=$(ego-browser nodejs < "$PROBE_MJS" 2>/dev/null | grep -o 'RESULT:.*' | head -1)
+  # 注意：ego-browser nodejs 把 console.log 输出写到 stderr，不是 stdout。
+  # 必须用 2>&1 合并后再过滤，否则永远拿不到 RESULT（曾导致守护进程一直误报「无输出」）。
+  RAW=$(ego-browser nodejs < "$PROBE_MJS" 2>&1 | grep -o 'RESULT:.*' | head -1)
   if [ -z "$RAW" ]; then
     echo "[$(date +%H:%M:%S)] 第 $N 次探测：ego-browser 无输出，${INTERVAL}s 后重试"
     sleep "$INTERVAL"
