@@ -6,10 +6,36 @@
 """
 import argparse
 import base64
+import fnmatch
 import json
 import os
 import subprocess
 import sys
+
+# .gitignore 里的排除项。推 API 时不会读 .gitignore，必须显式排除，
+# 否则 out/ 、*.zip 之类的构建产物会被提交进公开仓库。
+GITIGNORE_PATTERNS = [
+    "data/raw.json",
+    "*.zip",
+    "__pycache__/",
+    "*.pyc",
+    ".DS_Store",
+    "probe_cwd.mjs",
+    "out/",
+]
+
+
+def ignored(rel_path):
+    """rel_path 形如 'out/all/x.md' 或 'data/raw.json'。"""
+    for pat in GITIGNORE_PATTERNS:
+        if pat.endswith("/"):
+            if rel_path == pat[:-1] or rel_path.startswith(pat):
+                return True
+        elif fnmatch.fnmatch(os.path.basename(rel_path), pat):
+            return True
+        elif rel_path == pat:
+            return True
+    return False
 
 
 def gh(*args, input_json=None):
@@ -47,13 +73,17 @@ def main():
                 continue
             full = os.path.join(dirpath, fn)
             rel = os.path.relpath(full, root)
+            if ignored(rel):
+                continue
             if rel.startswith("data/raw"):
                 continue
             with open(full, "rb") as f:
                 content = f.read()
+            # 保留可执行位（不限于 .py —— .sh 也需要）
+            mode = "100755" if os.access(full, os.X_OK) else "100644"
             files.append({
                 "path": rel,
-                "mode": "100755" if os.access(full, os.X_OK) and full.endswith(".py") else "100644",
+                "mode": mode,
                 "type": "blob",
                 "content": base64.b64encode(content).decode(),
             })
@@ -61,6 +91,24 @@ def main():
     if not files:
         print("没有需要提交的文件")
         return
+
+    # 2.5 清理远端已存在但本地产物已删除 / 已被 gitignore 的文件。
+    #     建 tree 时传 sha=null 表示删除该路径。
+    remote_paths = gh(f"repos/{args.repo}/git/trees/{base_tree}?recursive=1")
+    keep = {f["path"] for f in files}
+    deletes = []
+    for entry in remote_paths.get("tree", []):
+        if entry.get("type") != "blob":
+            continue
+        p = entry["path"]
+        if p in keep:
+            continue
+        # 本地已不存在 → 删除；或属于 gitignore 产物 → 一并清理
+        if not os.path.exists(os.path.join(root, p)) or ignored(p):
+            deletes.append(p)
+    if deletes:
+        print(f"清理远端 {len(deletes)} 个文件：{', '.join(deletes[:8])}"
+              f"{'...' if len(deletes) > 8 else ''}")
 
     # 3. 建 blob
     blobs = []
@@ -71,10 +119,15 @@ def main():
         blobs.append(f)
 
     # 4. 建 tree
+    tree_entries = [
+        {"path": f["path"], "mode": f["mode"], "type": "blob", "sha": f["sha"]}
+        for f in blobs
+    ]
+    # sha=null 表示从 base_tree 中删除该路径
+    tree_entries += [{"path": p, "mode": "100644", "type": "blob", "sha": None}
+                     for p in deletes]
     tree = gh(f"repos/{args.repo}/git/trees", input_json=json.dumps({
-        "base_tree": base_tree, "tree": [
-            {"path": f["path"], "mode": f["mode"], "type": "blob", "sha": f["sha"]}
-            for f in blobs]}))
+        "base_tree": base_tree, "tree": tree_entries}))
     tree_sha = tree["sha"]
 
     # 5. 建 commit
