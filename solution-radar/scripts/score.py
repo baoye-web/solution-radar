@@ -15,6 +15,7 @@ import argparse
 import json
 import math
 import os
+import sys
 import re
 import time
 
@@ -211,6 +212,18 @@ def main():
 
     with open(args.inp, encoding="utf-8") as f:
         raw = json.load(f)
+
+    # 静默失败是定时任务里最贵的 bug：跑完显示成功，实际产出空清单。
+    # 输入结构不符必须立刻退出并说清原因。
+    if not isinstance(raw, dict) or "repos" not in raw:
+        got = list(raw.keys()) if isinstance(raw, dict) else type(raw).__name__
+        print(f"[score] 输入结构不符：期望含 'repos' 字段，实际得到 {got}", file=sys.stderr)
+        print(f"[score] 文件：{args.inp}", file=sys.stderr)
+        sys.exit(2)
+    if not raw.get("repos"):
+        print(f"[score] 输入无仓库数据（repos 为空）：{args.inp}", file=sys.stderr)
+        print("[score] 上游采集可能被限流或全部失败，请先检查 radar/fetch.py 的输出", file=sys.stderr)
+        sys.exit(3)
 
     entries = []
     for repo in raw.get("repos", []):
