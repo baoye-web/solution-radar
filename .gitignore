@@ -4,3 +4,4 @@ data/raw.json
 __pycache__/
 *.pyc
 .DS_Store
+probe_cwd.mjs
