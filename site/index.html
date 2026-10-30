@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>现成方案雷达 · 2026-10-30</title>
+<meta name="description" content="每条方案都补齐代价、收益、来源、红线四个维度的开源方案决策清单，每日自动更新。">
+<style>
+:root{--bg:#fbfbfa;--fg:#1a1a19;--mut:#6b6b68;--bd:#e3e2de;--ok:#1a7f4b;--warn:#9a6b00;--bad:#b03030;--card:#fff;--shadow:0 1px 2px rgba(0,0,0,.04)}
+@media (prefers-color-scheme:dark){:root{--bg:#161615;--fg:#e8e7e3;--mut:#98978f;--bd:#2e2e2b;--ok:#5cc98d;--warn:#d9a441;--bad:#e07a7a;--card:#1d1d1b;--shadow:none}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft Yahei",sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:40px 20px 80px}
+header{border-bottom:1px solid var(--bd);padding-bottom:24px;margin-bottom:32px}
+h1{margin:0 0 8px;font-size:26px;letter-spacing:-.02em}
+.meta{color:var(--mut);font-size:13px;display:flex;gap:18px;flex-wrap:wrap}
+.meta b{color:var(--fg);font-weight:600}
+.rules{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px 20px;margin:24px 0 32px;font-size:13.5px;box-shadow:var(--shadow)}
+.rules h2{font-size:14px;margin:0 0 8px;letter-spacing:.02em}
+.rules ol{margin:0;padding-left:20px;color:var(--mut)}
+.rules li{margin:3px 0}
+.rules b{color:var(--fg)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:var(--shadow)}
+.head{display:flex;gap:16px;align-items:flex-start}
+.score{flex:0 0 56px;text-align:center;background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:8px 0}
+.score .num{display:block;font-size:22px;font-weight:700;line-height:1.1}
+.score .lbl{display:block;font-size:10px;color:var(--mut);margin-top:2px}
+.titles{flex:1;min-width:0}
+.titles h2{margin:0 0 4px;font-size:16.5px;font-weight:650}
+.titles h2 a{color:var(--fg);text-decoration:none;border-bottom:1px solid transparent}
+.titles h2 a:hover{border-bottom-color:var(--fg)}
+.one{margin:0;color:var(--mut);font-size:13.5px;overflow-wrap:anywhere}
+.badge{flex:0 0 auto;font-size:11.5px;padding:3px 9px;border-radius:20px;border:1px solid}
+.badge.ok{color:var(--ok);border-color:currentColor}
+.badge.warn{color:var(--warn);border-color:currentColor}
+.badge.bad{color:var(--bad);border-color:currentColor}
+.decision{margin:14px 0 4px;padding:9px 13px;background:var(--bg);border-left:3px solid var(--fg);border-radius:0 6px 6px 0;font-size:13.5px;font-weight:550}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+.grid h3{margin:0 0 5px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);font-weight:600}
+.grid ul{margin:0;padding-left:16px;font-size:13px}
+.grid li{margin:2px 0;color:var(--fg)}
+.grid section.risk li{color:var(--bad)}
+.foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);color:var(--mut);font-size:12px}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--bd);color:var(--mut);font-size:12.5px}
+footer code{background:var(--card);padding:1.5px 5px;border-radius:4px;border:1px solid var(--bd)}
+</style></head><body><div class="wrap">
+<header>
+  <h1>现成方案雷达</h1>
+  <div class="meta">
+    <span>更新：<b>2026-10-30</b></span>
+    <span>垂类：<b>ai-agent、mcp-server</b></span>
+    <span>扫描：<b>74</b> 个仓库</span>
+    <span>入选：<b>20</b> 条</span>
+  </div>
+</header>
+<div class="rules">
+  <h2>这份清单怎么读</h2>
+  <ol>
+    <li><b>代价</b>不是星标数，是你要付出什么：授权成本、基础设施成本、维护成本。</li>
+    <li><b>能拿到什么</b>写的是能力，不是形容词。</li>
+    <li><b>证据链</b>每一条都可点开核验，不含推断。</li>
+    <li><b>红线</b>是硬约束：AGPL 类网络开源义务、无许可证、已弃用项目，看到就先停。</li>
+    <li>分数只用来<b>排序</b>，不用来替代判断。星标高不等于适合你。</li>
+  </ol>
+</div>
+<article class="card">
+  <div class="head">
+    <div class="score"><span class="num">76</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/n8n-io/n8n" target="_blank" rel="noopener">n8n-io/n8n</a></h2>
+      <p class="one">Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host </p>
+    </div>
+    <span class="badge warn">商用受限</span>
+  </div>
+  <div class="decision">推荐：可直接进入评估</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>许可证：商用受限（noassertion）</li><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>提供程序化调用接口，可嵌入自有系统</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：n8n-io/n8n</li><li>Star 209,090 / Fork 61,313</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：TypeScript</li><li>有正式 release，说明有发布纪律</li><li>topics：ai、apis、automation、cli、data-flow、development</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 209,090 · ⑂ 61,313 · 最后提交 0 天前 · TypeScript</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">76</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/langgenius/dify" target="_blank" rel="noopener">langgenius/dify</a></h2>
+      <p class="one">Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one collaborative workspace. Deploy on cl</p>
+    </div>
+    <span class="badge warn">商用受限</span>
+  </div>
+  <div class="decision">推荐：可直接进入评估</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>许可证：商用受限（noassertion）</li><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：langgenius/dify</li><li>Star 159,977 / Fork 25,276</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：agent、agentic-ai、agentic-framework、agentic-workflow、ai、automation</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 159,977 · ⑂ 25,276 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">74</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/HKUDS/nanobot" target="_blank" rel="noopener">HKUDS/nanobot</a></h2>
+      <p class="one">Your lightweight open-source personal agent.</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>数据不出本地，隐私合规成本低</li><li>有社区支持，问题可被快速响应</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：HKUDS/nanobot</li><li>Star 49,669 / Fork 8,700</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：agent-framework、ai-agent、ai-agents、chatbot、chatops、discord-bot</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 49,669 · ⑂ 8,700 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">72</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/unclecode/crawl4ai" target="_blank" rel="noopener">unclecode/crawl4ai</a></h2>
+      <p class="one">Open-source web crawler and scraper for LLMs and AI agents: any website into clean, LLM-ready Markdown. Run it yourself,</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可作为 MCP 服务接入任意客户端</li><li>可承担网页/接口数据采集</li><li>有社区支持，问题可被快速响应</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：unclecode/crawl4ai</li><li>Star 86,577 / Fork 9,013</li><li>最近提交：2026-10-29（0 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：ai、ai-agents、crawler、data-extraction、llm、markdown</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 86,577 · ⑂ 9,013 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">71</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/zylon-ai/private-gpt" target="_blank" rel="noopener">zylon-ai/private-gpt</a></h2>
+      <p class="one">Complete API layer for private AI applications on local models: RAG, skills, tools, MCP, text-to-sql, and more. Works wi</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li><li>需GPU：需要 GPU 资源，成本随推理量线性上升</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可作为 MCP 服务接入任意客户端</li><li>提供程序化调用接口，可嵌入自有系统</li><li>数据不出本地，隐私合规成本低</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：zylon-ai/private-gpt</li><li>Star 57,619 / Fork 7,620</li><li>最近提交：2026-10-29（0 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：ai、ai-tools、on-premise</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 57,619 · ⑂ 7,620 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">68</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/Evil0ctal/Douyin_TikTok_Download_API" target="_blank" rel="noopener">Evil0ctal/Douyin_TikTok_Download_API</a></h2>
+      <p class="one">🚀 自托管的抖音、TikTok、B 站数据采集与无水印视频下载 API，支持 AI agent 通过 MCP 调用与离线语音转文字，Docker 一键部署。| Self-hosted TikTok, Douyin &amp; Bilibili sc</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>可承担网页/接口数据采集</li><li>提供程序化调用接口，可嵌入自有系统</li><li>数据不出本地，隐私合规成本低</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：Evil0ctal/Douyin_TikTok_Download_API</li><li>Star 20,993 / Fork 2,923</li><li>最近提交：2026-10-27（2 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：bilibili、crawler、data-collection、douyin、douyin-api、downloader</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 20,993 · ⑂ 2,923 · 最后提交 2 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">67</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/browser-use/browser-use" target="_blank" rel="noopener">browser-use/browser-use</a></h2>
+      <p class="one">Open-source Python library for AI browser agents, plus Browser Use Cloud: stealth browsers and a hosted agent API.</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>提供程序化调用接口，可嵌入自有系统</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：browser-use/browser-use</li><li>Star 119,543 / Fork 13,306</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：ai-agents、ai-tools、browser-agent、browser-automation、browser-use、cdp</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 119,543 · ⑂ 13,306 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">67</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">google-gemini/gemini-cli</a></h2>
+      <p class="one">An open-source AI agent that brings the power of Gemini directly into your terminal.</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>提供程序化调用接口，可嵌入自有系统</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：google-gemini/gemini-cli</li><li>Star 108,626 / Fork 14,880</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：TypeScript</li><li>有正式 release，说明有发布纪律</li><li>topics：ai、ai-agents、cli、gemini、gemini-api、mcp-client</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 108,626 · ⑂ 14,880 · 最后提交 0 天前 · TypeScript</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">67</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/Panniantong/Agent-Reach" target="_blank" rel="noopener">Panniantong/Agent-Reach</a></h2>
+      <p class="one">Give your AI agent eyes to see the entire internet. Read &amp; search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongSh</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>提供程序化调用接口，可嵌入自有系统</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：Panniantong/Agent-Reach</li><li>Star 106,536 / Fork 9,458</li><li>最近提交：2026-10-25（5 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：agent-infrastructure、ai-agent、ai-search、automation、bilibili、claude-code</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 106,536 · ⑂ 9,458 · 最后提交 5 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">67</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/thedotmack/claude-mem" target="_blank" rel="noopener">thedotmack/claude-mem</a></h2>
+      <p class="one">Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可支撑自主任务执行与编排</li><li>提供程序化调用接口，可嵌入自有系统</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：thedotmack/claude-mem</li><li>Star 105,186 / Fork 9,269</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：TypeScript</li><li>有正式 release，说明有发布纪律</li><li>topics：ai、ai-agents、ai-memory、anthropic、artificial-intelligence、chromadb</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 105,186 · ⑂ 9,269 · 最后提交 0 天前 · TypeScript</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">67</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/D4Vinci/Scrapling" target="_blank" rel="noopener">D4Vinci/Scrapling</a></h2>
+      <p class="one">🕷️ The BEST Web Scraping framework that handles everything from a single request to a full-scale crawl! Don&#x27;t be shy, jo</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可作为 MCP 服务接入任意客户端</li><li>可承担网页/接口数据采集</li><li>有社区支持，问题可被快速响应</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：D4Vinci/Scrapling</li><li>Star 90,374 / Fork 9,358</li><li>最近提交：2026-10-29（0 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：ai、ai-scraping、automation、crawler、crawling、crawling-python</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 90,374 · ⑂ 9,358 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">67</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/xerj-org/xerj" target="_blank" rel="noopener">xerj-org/xerj</a></h2>
+      <p class="one">AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>提供程序化调用接口，可嵌入自有系统</li><li>数据不出本地，隐私合规成本低</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：xerj-org/xerj</li><li>Star 17,613 / Fork 1,356</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：Rust</li><li>有正式 release，说明有发布纪律</li><li>topics：agent-memory、ai-agents、bm25、claude-code、cli、code-search</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 17,613 · ⑂ 1,356 · 最后提交 0 天前 · Rust</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">66</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/koala73/worldmonitor" target="_blank" rel="noopener">koala73/worldmonitor</a></h2>
+      <p class="one">Real-time global intelligence dashboard. AI-powered news aggregation, geopolitical monitoring, and infrastructure tracki</p>
+    </div>
+    <span class="badge bad">强 Copyleft</span>
+  </div>
+  <div class="decision">不推荐：强 copyleft，商用路径不清晰</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>许可证：网络服务须开源（agpl-3.0）</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：koala73/worldmonitor</li><li>Star 89,777 / Fork 13,838</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：TypeScript</li><li>有正式 release，说明有发布纪律</li><li>topics：agent、ai、dashboard、geopolitics、mcp、mcp-server</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可</li></ul></section>
+  </div>
+  <div class="foot">★ 89,777 · ⑂ 13,838 · 最后提交 0 天前 · TypeScript</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">66</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/ruvnet/ruflo" target="_blank" rel="noopener">ruvnet/ruflo</a></h2>
+      <p class="one">🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinate autonomous workflows, and build convers</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：ruvnet/ruflo</li><li>Star 80,214 / Fork 9,405</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：TypeScript</li><li>有正式 release，说明有发布纪律</li><li>topics：agentic-ai、agentic-framework、agentic-workflow、agents、ai-agents、ai-assistant</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 80,214 · ⑂ 9,405 · 最后提交 0 天前 · TypeScript</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">66</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/headroomlabs-ai/headroom" target="_blank" rel="noopener">headroomlabs-ai/headroom</a></h2>
+      <p class="one">Compress tool outputs, logs, files, and RAG chunks before they reach the LLM. 20% fewer tokens for coding agents, 60-95%</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：headroomlabs-ai/headroom</li><li>Star 78,312 / Fork 6,107</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：agent、ai、anthropic、claude-code、compression、context-engineering</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 78,312 · ⑂ 6,107 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">66</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/siyuan-note/siyuan" target="_blank" rel="noopener">siyuan-note/siyuan</a></h2>
+      <p class="one">An open-source, privacy-first, self-hosted knowledge workspace where humans and AI agents work together 开源、隐私优先、自托管的知识工作</p>
+    </div>
+    <span class="badge bad">强 Copyleft</span>
+  </div>
+  <div class="decision">不推荐：强 copyleft，商用路径不清晰</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>许可证：网络服务须开源（agpl-3.0）</li><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>数据不出本地，隐私合规成本低</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：siyuan-note/siyuan</li><li>Star 47,000 / Fork 3,093</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：TypeScript</li><li>有正式 release，说明有发布纪律</li><li>topics：agentic-ai、ai-agent、knowledge-base、local-first、markdown、mcp</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可</li></ul></section>
+  </div>
+  <div class="foot">★ 47,000 · ⑂ 3,093 · 最后提交 0 天前 · TypeScript</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">65</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/bojieli/ai-agent-book" target="_blank" rel="noopener">bojieli/ai-agent-book</a></h2>
+      <p class="one">《深入理解 AI Agent：设计原理与工程实践》（李博杰 著）开源主仓库：全书正文、编译版 PDF 与按章配套代码</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>解决知识注入与检索问题</li><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：bojieli/ai-agent-book</li><li>Star 56,640 / Fork 6,519</li><li>最近提交：2026-10-08（21 天前）</li><li>主语言：Python</li><li>有正式 release，说明有发布纪律</li><li>topics：agent、agent-memory、ai-agent、book、coding-agent、context-engineering</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 56,640 · ⑂ 6,519 · 最后提交 21 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">64</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/sansan0/TrendRadar" target="_blank" rel="noopener">sansan0/TrendRadar</a></h2>
+      <p class="one">⭐AI-driven public opinion &amp; trend monitor with multi-platform aggregation, RSS, and smart alerts.🎯 告别信息过载，你的 AI 舆情监控助手与热</p>
+    </div>
+    <span class="badge bad">强 Copyleft</span>
+  </div>
+  <div class="decision">不推荐：强 copyleft，商用路径不清晰</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>许可证：分发须开源（gpl-3.0）</li><li>规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高</li><li>工程：无正式 release，升级需自行评估破坏性变更</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可作为 MCP 服务接入任意客户端</li><li>提供调用链追踪与效果评测能力</li><li>有社区支持，问题可被快速响应</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：sansan0/TrendRadar</li><li>Star 63,308 / Fork 24,911</li><li>最近提交：2026-10-29（0 天前）</li><li>主语言：Python</li><li>topics：ai、bark、data-analysis、docker、hot-news、llm</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可</li></ul></section>
+  </div>
+  <div class="foot">★ 63,308 · ⑂ 24,911 · 最后提交 0 天前 · Python</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">64</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/DeusData/codebase-memory-mcp" target="_blank" rel="noopener">DeusData/codebase-memory-mcp</a></h2>
+      <p class="one">Local code intelligence for developers and AI agents. Connect code, docs and infrastructure in a persistent graph, with </p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>许可证：宽松，可闭源商用；无明显基础设施依赖</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>数据不出本地，隐私合规成本低</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：DeusData/codebase-memory-mcp</li><li>Star 47,824 / Fork 3,933</li><li>最近提交：2026-10-29（1 天前）</li><li>主语言：C</li><li>有正式 release，说明有发布纪律</li><li>topics：aider、ast、claude-code、code-analysis、code-intelligence、codex</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 47,824 · ⑂ 3,933 · 最后提交 1 天前 · C</div>
+</article><article class="card">
+  <div class="head">
+    <div class="score"><span class="num">64</span><span class="lbl">综合分</span></div>
+    <div class="titles">
+      <h2><a href="https://github.com/reactive-resume/reactive-resume" target="_blank" rel="noopener">reactive-resume/reactive-resume</a></h2>
+      <p class="one">A one-of-a-kind resume builder that keeps your privacy in mind. Completely secure, customizable, portable, open-source a</p>
+    </div>
+    <span class="badge warn">宽松</span>
+  </div>
+  <div class="decision">可考虑：先验证一个具体场景能否跑通</div>
+  <div class="grid">
+    <section><h3>代价</h3><ul><li>需自建/托管：需要自己部署或购买云服务，有持续运维成本</li></ul></section>
+    <section><h3>能拿到什么</h3><ul><li>可支撑自主任务执行与编排</li><li>可作为 MCP 服务接入任意客户端</li><li>数据不出本地，隐私合规成本低</li></ul></section>
+    <section><h3>证据链</h3><ul><li>仓库：reactive-resume/reactive-resume</li><li>Star 45,093 / Fork 4,895</li><li>最近提交：2026-10-30（0 天前）</li><li>主语言：TypeScript</li><li>有正式 release，说明有发布纪律</li><li>topics：agent-skills、ai、dsh-plugin、hacktoberfest、javascript、mcp-server</li></ul></section>
+    <section class="risk"><h3>红线</h3><ul><li>未发现明显红线，但依赖评估仍需自行验证</li></ul></section>
+  </div>
+  <div class="foot">★ 45,093 · ⑂ 4,895 · 最后提交 0 天前 · TypeScript</div>
+</article>
+<footer>
+  数据来源：GitHub 公开 API，每日自动重扫。评分逻辑见仓库 <code>radar/score.py</code>，可自行复算。<br>
+  本清单不构成投资建议。许可证条款以各项目原文为准。
+</footer>
+</div></body></html>

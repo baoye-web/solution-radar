@@ -1,0 +1,102 @@
+name: 现成方案雷达 · 每日更新
+
+on:
+  schedule:
+    # GitHub Actions cron 用 UTC。每天 01:47 UTC = 北京时间 09:47
+    # 刻意避开整点：整点是所有人的默认值，排队更稳
+    - cron: '47 1 * * *'
+  workflow_dispatch:
+    inputs:
+      topics:
+        description: '垂类（逗号分隔）'
+        required: false
+        default: 'ai-agent,mcp-server,llm-agent'
+      min_stars:
+        description: '最小 star 阈值'
+        required: false
+        default: '800'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: radar-daily
+  cancel-in-progress: false
+
+env:
+  PYTHONIOENCODING: utf-8
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 采集
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 radar/fetch.py \
+            --topics "${{ github.event.inputs.topics || 'ai-agent,mcp-server,llm-agent' }}" \
+            --min-stars ${{ github.event.inputs.min_stars || '800' }} \
+            --pages 2 --per-page 30 \
+            --out data/raw.json
+
+      - name: 评分
+        run: python3 radar/score.py --in data/raw.json --out data/entries.json --limit 60
+
+      - name: 发布
+        run: python3 radar/publish.py --in data/entries.json --outdir site --reports reports --limit 24
+
+      - name: 变更检测
+        id: diff
+        run: |
+          git config user.name  "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "无变化，跳过提交"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            git commit -m "chore: 雷达清单每日更新 $(date -u +%Y-%m-%d)"
+          fi
+
+      - name: 提交
+        if: steps.diff.outputs.changed == 'true'
+        run: git push origin HEAD:${{ github.ref_name }}
+
+      - name: 部署 Pages
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+      - name: 发布站点
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/deploy-pages@v4
+        with:
+          environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+  # 失败时把原始数据留在 artifact 里，方便事后排查而不是"什么都没发生"
+  salvage:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 上传现场
+        uses: actions/upload-artifact@v4
+        with:
+          name: radar-debug
+          path: |
+            data/
+            reports/
+          retention-days: 7
