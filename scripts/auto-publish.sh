@@ -52,18 +52,52 @@ fi
 PROBE_MJS="$LOG_DIR/_probe_party.mjs"
 cat > "$PROBE_MJS" <<'EOF'
 const task = await taskSpace("wb-daemon-probe");
-const page = task.page("p1");
-// 用认证页而非 404 页来读状态
-await page.goto("https://open.workbuddy.cn/verification?type=new&from=login-no-party");
-await new Promise(r => setTimeout(r, 4000));
-const p = await page.evaluate(() => {
+const page = task.page("p1") || await task.newPage();
+// 免导航优先：page.goto 会抢焦点，可能打断用户在认证表单里输入身份证号。
+// tab 在进程间持久化，所以只要 origin 仍匹配就复用它，只读 localStorage + 只读接口。
+let navErr = null;
+let cur = "";
+try { cur = await page.url(); } catch (e) {}
+if (!/open\.workbuddy\.cn/.test(cur)) {
+  try {
+    await page.goto("https://open.workbuddy.cn/verification?type=new&from=login-no-party");
+  } catch (e) {
+    navErr = String(e).slice(0, 160);
+  }
+  await new Promise(r => setTimeout(r, 4000));
+}
+const p = await page.evaluate(async (nav) => {
   let a = null;
   try { a = JSON.parse(localStorage.getItem("workbuddy-auth") || "null"); } catch(e) {}
+  // 服务端权威口径：GET /api/v2/open-platform/parties
+  // 平台在该列表中按 partyType=personal / verifyStatus=verified 标记已实名主体。
+  // 人脸核身通过前，平台会先创建一条 draft 主体（邮箱验证码通过即建），
+  // 因此该列表还能区分「从未开始」「邮箱已验、人脸未做」「已实名」三种状态。
+  let srv = null;
+  try {
+    const r = await fetch("/api/v2/open-platform/parties", { credentials: "include" });
+    const j = await r.json();
+    const list = j?.data?.parties || [];
+    const verified = list.find(x => x.partyType === "personal" && x.verifyStatus === "verified");
+    const draft = list.find(x => x.partyType === "personal");
+    srv = {
+      code: j?.code,
+      count: list.length,
+      verifiedPartyId: verified?.partyId || null,
+      draftPartyId: draft?.partyId || null,
+      draftStatus: draft?.verifyStatus || null,
+      draftNextAction: draft?.nextAction || null,
+      emailVerified: draft?.contactEmailVerified ?? null,
+      operatorVerified: draft?.operatorVerified ?? null,
+    };
+  } catch(e) { srv = { err: String(e).slice(0, 80) }; }
   return { pid: a?.state?.partyId || a?.partyId || null,
            m: a?.state?.certMethod || a?.certMethod || null,
            l: localStorage.getItem("loggedIn") === "true",
-           u: location.href };
-});
+           u: location.href,
+           srv: srv,
+           nav: nav || null };
+}, navErr);
 console.log("RESULT:" + JSON.stringify(p));
 EOF
 
@@ -72,11 +106,14 @@ echo "等待 partyId（实名认证完成后平台自动签发）"
 echo "超时 ${WAIT_TIMEOUT}s，间隔 ${INTERVAL}s，定价 ${PRICE} 元/月"
 echo ""
 echo "需要你做一件事（一次性，约 15 分钟）："
-echo "  打开 https://open.workbuddy.cn/settings/developer"
-echo "  未认证会自动跳到 https://open.workbuddy.cn/verification?type=new&from=login-no-party"
-echo "  选「个人认证」→ 填姓名/身份证/手机/邮箱 → 人脸识别"
+echo "  ✅ 浏览器里已为你打开好「个人认证」表单，且已登录（无需再扫码登录）"
+echo "     窗口标签页：WorkBuddy 开放平台 → 路径 /verification/personal"
+echo "  填 4 项：真实姓名 / 身份证号 / 手机号 / 邮箱 → 点「发送验证码」取邮箱验证码"
+echo "  勾选同意条款 → 点「核验信息」→ 第 2 步「人脸识别」（用手机对着摄像头）"
 echo "  需：二代身份证 + 已实名手机号 + 能做人脸识别的手机"
 echo "  完成后本脚本自动接手直到上架发布，全程无需再操作。"
+echo ""
+echo "  进度可自查：本脚本每轮会打印当前阶段（未开始 / 邮箱已验证待人脸 / 已实名）"
 echo ""
 
 cd "$ROOT" || exit 1
@@ -101,7 +138,7 @@ while [ "$(date +%s)" -lt "$DEADLINE" ]; do
 import sys, json
 try:
     d = json.load(sys.stdin)
-    print(d.get('pid') or '')
+    print(d.get('pid') or d.get('srv',{}).get('verifiedPartyId') or '')
 except Exception:
     print('')
 " 2>/dev/null)
@@ -115,9 +152,21 @@ except Exception:
 import sys, json
 try:
     d = json.load(sys.stdin)
-    m = d.get('m') or '未标认证方式'
+    s = d.get('srv') or {}
     l = '已登录' if d.get('l') else '未登录'
-    print(f\"{l}，待认证方式={m}\")
+    n = s.get('count', 0)
+    if n == 0:
+        # 主体列表为空 = 连邮箱验证码那一步都还没提交
+        stage = '未开始认证(主体列表为空)'
+    elif s.get('verifiedPartyId'):
+        stage = '已实名(服务端已签发)'
+    else:
+        # 有 draft 主体 = 邮箱已验证，正在做人脸核身
+        ev = s.get('emailVerified')
+        stage = '邮箱已验证,待人脸核身(draft)'
+        if ev is False:
+            stage = '主体已建,邮箱未验证(draft)'
+    print(f\"{l}，{stage}\")
 except Exception:
     print('解析失败')
 " 2>/dev/null)
@@ -141,7 +190,14 @@ fi
 echo ""
 echo "=== 开始自动上架（预检 → 打包 → 上传 → 提审 → 定价 → 发布 → 推广渠道 → 收入校验）==="
 cd "$ROOT"
-ego-browser nodejs < solution-radar/scripts/publish.mjs -- --submit --publish --price "$PRICE" --monthly
+# ego-browser nodejs 不接受尾随参数（也不透传环境变量），
+# 参数必须走配置文件，否则命令会以退出码 2 失败，
+# 而 2 恰好与「缺少 partyId」的退出码相同，会掩盖真实错误。
+PUB_CFG="$LOG_DIR/_publish_config.json"
+cat > "$PUB_CFG" <<CFG
+{"submit":true,"publish":true,"price":${PRICE},"monthly":true}
+CFG
+WB_PUBLISH_CONFIG="$PUB_CFG" ego-browser nodejs < solution-radar/scripts/publish.mjs
 RC=$?
 
 echo ""

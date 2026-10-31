@@ -11,13 +11,17 @@
  *   403 是「缺 party_id」，不是「未登录」——登录态有效，缺的是主体。
  *
  * 用法：
- *   ego-browser nodejs < solution-radar/scripts/publish.mjs -- --submit
- *   参数：
- *     --submit    上传后立即提交审核
- *     --publish   审核通过则定价并发布（需配合 --price）
- *     --price N   定价（元）
- *     --monthly   按月订阅而非一次性买断
- *     --wait      轮询等待 partyId（实名认证完成后自动继续）
+ *   ego-browser nodejs < solution-radar/scripts/publish.mjs
+ *   ⚠️ 不要在命令后追加参数：ego-browser nodejs 会拒绝尾随参数。
+ *   参数改用配置文件传入（默认 /tmp/wb_publish_config.json）：
+ *     {"submit":true,"publish":true,"price":19,"monthly":true}
+ *   也可用环境变量 WB_PUBLISH_CONFIG 指定其他配置文件路径。
+ *   参数含义：
+ *     submit    上传后立即提交审核
+ *     publish   审核通过则定价并发布（需配合 price）
+ *     price     定价（元）
+ *     monthly   按月订阅而非一次性买断
+ *     wait      轮询等待 partyId（实名认证完成后自动继续）
  */
 
 const fs = require("node:fs");
@@ -30,13 +34,35 @@ const val = (f, d) => {
   return i >= 0 && args[i + 1] ? args[i + 1] : d;
 };
 
-const SUBMIT = has("--submit");
-const PUBLISH = has("--publish");
-const PRICE = parseInt(val("--price", "0"), 10);
-const MONTHLY = has("--monthly");
-const WAIT = has("--wait");
-const WAIT_TIMEOUT = parseInt(val("--wait-timeout", "3600"), 10) * 1000;
-const INTERVAL = parseInt(val("--interval", "30"), 10) * 1000;
+// 参数来源：命令行参数 或 配置文件。
+// 实测（2026-11-01）：`ego-browser nodejs` 拒绝任何尾随参数
+// （报 "accepts at most one source argument"），且不透传环境变量，
+// 因此 `ego-browser nodejs < publish.mjs -- --submit --publish ...` 这种写法
+// 必然失败，且退出码恰好是 2 —— 与「缺少 partyId」的退出码完全相同，
+// 会把真实错误掩盖成「还没实名认证」。
+// 解决办法：把参数写进配置文件，由脚本自己读取。
+// 用法：
+//   ego-browser nodejs < solution-radar/scripts/publish.mjs
+//   （可选）先写 /tmp/wb_publish_config.json：
+//     {"submit":true,"publish":true,"price":19,"monthly":true,"wait":false}
+const CFG_PATH = process.env.WB_PUBLISH_CONFIG || "/tmp/wb_publish_config.json";
+let cfg = {};
+try {
+  cfg = JSON.parse(fs.readFileSync(CFG_PATH, "utf8"));
+} catch { /* 无配置文件则全部用默认值 */ }
+
+const flag = (name, key, dflt) => {
+  if (cfg[key] !== undefined) return cfg[key];
+  return dflt;
+};
+
+const SUBMIT = cfg.submit !== undefined ? !!cfg.submit : has("--submit");
+const PUBLISH = cfg.publish !== undefined ? !!cfg.publish : has("--publish");
+const PRICE = parseInt(cfg.price !== undefined ? cfg.price : val("--price", "0"), 10) || 0;
+const MONTHLY = cfg.monthly !== undefined ? !!cfg.monthly : has("--monthly");
+const WAIT = cfg.wait !== undefined ? !!cfg.wait : has("--wait");
+const WAIT_TIMEOUT = parseInt(cfg.waitTimeout !== undefined ? cfg.waitTimeout : val("--wait-timeout", "3600"), 10) * 1000;
+const INTERVAL = parseInt(cfg.interval !== undefined ? cfg.interval : val("--interval", "30"), 10) * 1000;
 
 const BASE = "https://open.workbuddy.cn";
 const V2 = `${BASE}/api/v2/open-platform`;
@@ -81,9 +107,16 @@ async function api(page, method, path, body) {
   return { status: r.status, body: parsed };
 }
 
-// ---- 从 localStorage 读 partyId ----
+// ---- 读实名认证状态 ----
+// 优先 localStorage（前端 zustand store 的 partyId）；若为空，回落到服务端
+// GET /api/v2/open-platform/parties —— 该端点是平台官方的「主体列表」，
+// 已实名时其中会有 partyType=personal 且 verifyStatus=verified 的记录，
+// 其 partyId 才是真正被服务端签发的主体 ID。
+// 实测（2026-11-01）：用户提交邮箱验证码后，平台会先创建一条 draft 主体，
+// 人脸核身通过后才变 verified；此时若 SPA 尚未刷新 localStorage，
+// 单看 localStorage 会误判「未认证」，而 parties 列表是权威口径。
 async function readPartyId(page) {
-  return await page.evaluate(() => {
+  const local = await page.evaluate(() => {
     let auth = null;
     try { auth = JSON.parse(localStorage.getItem("workbuddy-auth") || "null"); } catch {}
     return {
@@ -92,6 +125,30 @@ async function readPartyId(page) {
       loggedIn: localStorage.getItem("loggedIn") === "true",
     };
   });
+
+  let server = null;
+  try {
+    server = await page.evaluate(async () => {
+      const r = await fetch("/api/v2/open-platform/parties", { credentials: "include" });
+      const j = await r.json();
+      const list = j?.data?.parties || [];
+      const verified = list.find((p) => p.partyType === "personal" && p.verifyStatus === "verified");
+      const draft = list.find((p) => p.partyType === "personal");
+      return {
+        code: j?.code,
+        count: list.length,
+        verifiedPartyId: verified?.partyId || null,
+        draftPartyId: draft?.partyId || null,
+        draftStatus: draft?.verifyStatus || null,
+        draftNextAction: draft?.nextAction || null,
+        emailVerified: draft?.contactEmailVerified ?? null,
+        operatorVerified: draft?.operatorVerified ?? null,
+      };
+    });
+  } catch { /* 服务端不可达时以 localStorage 为准 */ }
+
+  const partyId = local.partyId || server?.verifiedPartyId || null;
+  return { ...local, partyId, server };
 }
 
 // ---- 本地预检（与 Python 侧规则一致，双保险）----
@@ -155,13 +212,16 @@ async function main() {
 
   const task = await taskSpace("wb-publish");
   const page = task.page("p1");
-  await page.goto(`${BASE}/developer-profile`);
+  // 导航到真实存在的开发者设置页（/developer-profile 是 404 路由，不要用）
+  await page.goto(`${BASE}/settings/developer`);
   await new Promise((r) => setTimeout(r, 5000));
 
   // 3) 拿 partyId（必要时轮询等待实名认证完成）
   let party = await readPartyId(page);
   if (!party.partyId && WAIT) {
+    const srv = party.server || {};
     log(`  未实名认证（certMethod=${party.certMethod}），轮询等待 partyId…`);
+    log(`  服务端主体列表：count=${srv.count ?? "?"}${srv.draftPartyId ? "（有 draft 主体，待人脸核身）" : "（尚未创建主体，尚未提交认证）"}`);
     log(`  请打开 ${BASE}/settings/developer 完成实名认证（需二代身份证 + 已实名手机号 + 人脸核身）`);
     const t0 = Date.now();
     let n = 0;
@@ -171,7 +231,7 @@ async function main() {
       n++;
       if (party.partyId) { log(`  ✓ 拿到 partyId（${n} 次探测）`); break; }
       if (n % 4 === 0) {
-        await page.goto(`${BASE}/developer-profile`);
+        await page.goto(`${BASE}/settings/developer`);
         await new Promise((r) => setTimeout(r, 3000));
         log(`  …仍在等待（第 ${n} 次）`);
       }
