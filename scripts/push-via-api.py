@@ -24,6 +24,45 @@ GITIGNORE_PATTERNS = [
     "out/",
 ]
 
+# 由管线生成的产物。docs/ data/entries.json reports/ 三者同源，
+# 全部来自同一次 entries.json 运行，因此用 data/entries.json 的 generated_at
+# 作为整包的「新鲜度戳」。
+GENERATED_FILES = {"data/entries.json"}
+GENERATED_DIRS = ("docs/", "reports/")
+
+
+def is_generated(rel_path):
+    """判断该路径是否属于管线生成的产物。"""
+    if rel_path in GENERATED_FILES:
+        return True
+    return any(rel_path.startswith(d) for d in GENERATED_DIRS)
+
+
+def read_stamp(path):
+    """读取产物的 generated_at 戳。解析不了返回 None（表示无法比较）。"""
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f).get("generated_at")
+    except Exception:
+        return None
+
+
+def remote_stamp(repo, branch, rel_path):
+    """读取远端同名产物的 generated_at 戳。"""
+    try:
+        r = gh(f"repos/{repo}/contents/{rel_path}?ref={branch}")
+        content = base64.b64decode(r["content"]).decode("utf-8")
+        return json.loads(content).get("generated_at")
+    except Exception:
+        return None
+
+
+def stamp_fresh(local, remote):
+    """本地戳是否比远端戳新。任一侧缺失时返回 True（不拦，交由人工判断）。"""
+    if not local or not remote:
+        return True
+    return local >= remote
+
 
 def ignored(rel_path):
     """rel_path 形如 'out/all/x.md' 或 'data/raw.json'。"""
@@ -92,6 +131,21 @@ def main():
         print("没有需要提交的文件")
         return
 
+    # 2.4 新鲜度守卫。
+    #     本地工作区里的管线产物可能比远端 CI 产物旧——因为 CI 跑完提交后，
+    #     本地并没有同步回 docs/ data/ reports/。此时若照常推送，就会把 CI
+    #     刚生成的清单覆盖回旧版本（本站已因此回退过两次：40 条覆盖 60 条）。
+    #     以 data/entries.json 的 generated_at 作为整包戳（三者同源）。
+    #     远端更新时跳过所有生成产物，让 CI 的版本保持权威。
+    local_stamp = read_stamp(os.path.join(root, "data/entries.json"))
+    remote_ts = remote_stamp(args.repo, args.branch, "data/entries.json")
+    skip_generated = False
+    if local_stamp and remote_ts and remote_ts > local_stamp:
+        skip_generated = True
+        print(f"⚠️ 本地产物比远端旧（本地 {local_stamp} < 远端 {remote_ts}），"
+              f"跳过 docs/ data/entries.json reports/，不覆盖 CI 刚生成的内容。")
+        files = [f for f in files if not is_generated(f["path"])]
+
     # 2.5 清理远端已存在但本地产物已删除 / 已被 gitignore 的文件。
     #     建 tree 时传 sha=null 表示删除该路径。
     remote_paths = gh(f"repos/{args.repo}/git/trees/{base_tree}?recursive=1")
@@ -102,6 +156,9 @@ def main():
             continue
         p = entry["path"]
         if p in keep:
+            continue
+        # 跳过生成产物时，远端生成物一律保留，不能删
+        if skip_generated and is_generated(p):
             continue
         # 本地已不存在 → 删除；或属于 gitignore 产物 → 一并清理
         if not os.path.exists(os.path.join(root, p)) or ignored(p):

@@ -37,6 +37,7 @@ jobs:
             --topics "ai-agent,mcp-server,llm-agent" \
             --min-stars 800 \
             --pages 2 --per-page 30 \
+            --check-releases \
             --out data/raw.json
 
       - name: 评分

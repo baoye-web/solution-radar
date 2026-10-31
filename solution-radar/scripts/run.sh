@@ -48,7 +48,7 @@ echo "垂类：$TOPICS ｜ 最小 star：$MIN_STARS ｜ 输出条数：$LIMIT"
 echo ""
 
 echo "[1/3] 采集"
-"$PY" "$SCRIPT_DIR/fetch.py" --topics "$TOPICS" --min-stars "$MIN_STARS" --out "$WORK/raw.json"
+"$PY" "$SCRIPT_DIR/fetch.py" --topics "$TOPICS" --min-stars "$MIN_STARS" --check-releases --out "$WORK/raw.json"
 
 echo "[2/3] 评分与四维补齐"
 "$PY" "$SCRIPT_DIR/score.py" --in "$WORK/raw.json" --out "$OUT/entries.json" --limit "$LIMIT"

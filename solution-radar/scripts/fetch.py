@@ -54,21 +54,28 @@ CUSTOM_LICENSES = {
 
 
 def http_json(url, token=None, retries=3):
-    """带退避重试的 JSON GET。GitHub 无 token 时限流 60/h，失败会返回 403。"""
+    """带退避重试的 JSON GET。GitHub 无 token 时限流 60/h，失败会返回 403。
+
+    关键约束：无 token 时 core 配额只有 60 次/小时。若在配额耗尽后继续重试，
+    会长时间挂起（每次退避 20/40s），在无人值守场景里等于卡死。
+    因此这里：
+      · 403/429 且判定为配额问题 → 不再重试，直接返回 None
+      · 配额耗尽时跳过「逐仓库的 releases 探测」这类昂贵调用
+    """
     headers = {"Accept": "application/vnd.github+json", "User-Agent": UA}
     if token:
         headers["Authorization"] = f"Bearer {token}"
     for attempt in range(retries):
         try:
             req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=25) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
-            if e.code in (403, 429) and attempt < retries - 1:
-                wait = 20 * (attempt + 1)
-                print(f"  [rate-limit] {e.code} → 等待 {wait}s", file=sys.stderr)
-                time.sleep(wait)
-                continue
+            if e.code in (403, 429):
+                # 配额类错误重试无意义（要等一小时），直接放弃
+                if attempt == 0:
+                    print(f"  [rate-limit] {e.code} —— 配额受限，放弃重试：{url[:80]}", file=sys.stderr)
+                return None
             if e.code == 404:
                 return None
             print(f"  [http {e.code}] {url[:90]}", file=sys.stderr)
@@ -76,7 +83,7 @@ def http_json(url, token=None, retries=3):
         except Exception as e:  # noqa: BLE001
             print(f"  [err] {str(e)[:80]}", file=sys.stderr)
             if attempt < retries - 1:
-                time.sleep(3)
+                time.sleep(2)
                 continue
             return None
     return None
@@ -143,8 +150,12 @@ def classify_license(spdx_id, license_obj, full_name=None):
             "note": f"未识别许可证：{sid}", "needs_manual_review": True}
 
 
-def fetch_one(repo, token):
-    """单个仓库的完整抽取。"""
+def fetch_one(repo, token, check_releases=True):
+    """单个仓库的完整抽取。
+
+    check_releases 控制是否额外探测 release —— 这是 core 类配额最贵的调用。
+    无 token 时（60 次/小时）默认跳过，靠搜索结果里的 has_downloads 等字段做弱代理。
+    """
     full = repo.get("full_name")
     lic_obj = repo.get("license") or {}   # 无许可证仓库该字段为 None
     lic = classify_license(lic_obj.get("spdx_id"), lic_obj, full)
@@ -159,11 +170,11 @@ def fetch_one(repo, token):
         except Exception:  # noqa: BLE001
             days_since_push = 9999
 
-    # 维护信号：近 90 天有提交 = 活；无 release = 可能只是玩具
+    # 维护信号：有 release 说明有发布纪律。这是 core 配额里最贵的一次调用
     has_releases = False
-    rel = http_json(f"{API}/repos/{full}/releases?per_page=1", token)
-    if rel:
-        has_releases = True
+    if check_releases:
+        rel = http_json(f"{API}/repos/{full}/releases?per_page=1", token)
+        has_releases = bool(rel)
 
     topics = repo.get("topics") or []
     return {
@@ -206,11 +217,22 @@ def main():
     ap.add_argument("--per-page", type=int, default=30)
     ap.add_argument("--extra", default="")
     ap.add_argument("--out", default="data/raw.json")
+    ap.add_argument("--check-releases", dest="check_releases", action="store_true",
+                    help="额外探测 release（耗 core 配额，需要 token）")
+    ap.add_argument("--no-check-releases", dest="check_releases", action="store_false",
+                    help="跳过 release 探测（默认行为）")
+    ap.set_defaults(check_releases=False)
     args = ap.parse_args()
 
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     topics = [t.strip() for t in args.topics.split(",") if t.strip()]
     queries = build_queries(topics, args.min_stars, args.extra)
+
+    # 有 token 才有余量做 release 探测（core 配额 5000/h vs 60/h）
+    check_releases = args.check_releases and bool(token)
+    if args.check_releases and not token:
+        print("[fetch] 无 GITHUB_TOKEN，跳过 release 探测（core 配额仅 60/h，省着用）",
+              file=sys.stderr)
 
     seen = {}
     for q in queries:
@@ -219,7 +241,7 @@ def main():
             fn = repo.get("full_name")
             if not fn or fn in seen:
                 continue
-            seen[fn] = fetch_one(repo, token)
+            seen[fn] = fetch_one(repo, token, check_releases)
 
     rows = list(seen.values())
     # 排序：星标为主，活跃度与许可证友好度为辅
@@ -227,8 +249,9 @@ def main():
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump({"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                   "topics": topics, "count": len(rows), "repos": rows}, f,
-                  ensure_ascii=False, indent=2)
+                   "topics": topics, "count": len(rows),
+                   "release_checked": check_releases,
+                   "repos": rows}, f, ensure_ascii=False, indent=2)
     print(f"[fetch] 落盘 {len(rows)} 条 → {args.out}", file=sys.stderr)
 
 

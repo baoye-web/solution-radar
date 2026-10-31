@@ -1,18 +1,19 @@
 {
-  "generated_at": "2026-10-30T10:21:38Z",
+  "generated_at": "2026-10-31T01:50:07Z",
   "topics": [
     "ai-agent",
-    "mcp-server"
+    "mcp-server",
+    "llm-agent"
   ],
-  "total_scanned": 74,
+  "total_scanned": 303,
   "entries": [
     {
       "name": "n8n-io/n8n",
       "url": "https://github.com/n8n-io/n8n",
       "one_liner": "Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host ",
       "score": 76,
-      "stars": 209090,
-      "forks": 61313,
+      "stars": 209152,
+      "forks": 61324,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "source-available",
@@ -30,7 +31,7 @@
       ],
       "sources": [
         "仓库：n8n-io/n8n",
-        "Star 209,090 / Fork 61,313",
+        "Star 209,152 / Fork 61,324",
         "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
@@ -46,8 +47,8 @@
       "url": "https://github.com/langgenius/dify",
       "one_liner": "Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one collaborative workspace. Deploy on cl",
       "score": 76,
-      "stars": 159977,
-      "forks": 25276,
+      "stars": 160031,
+      "forks": 25290,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "source-available",
@@ -65,8 +66,8 @@
       ],
       "sources": [
         "仓库：langgenius/dify",
-        "Star 159,977 / Fork 25,276",
-        "最近提交：2026-10-30（0 天前）",
+        "Star 160,031 / Fork 25,290",
+        "最近提交：2026-10-31（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：agent、agentic-ai、agentic-framework、agentic-workflow、ai、automation"
@@ -81,8 +82,8 @@
       "url": "https://github.com/HKUDS/nanobot",
       "one_liner": "Your lightweight open-source personal agent.",
       "score": 74,
-      "stars": 49669,
-      "forks": 8700,
+      "stars": 49687,
+      "forks": 8699,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "宽松",
@@ -99,7 +100,7 @@
       ],
       "sources": [
         "仓库：HKUDS/nanobot",
-        "Star 49,669 / Fork 8,700",
+        "Star 49,687 / Fork 8,699",
         "最近提交：2026-10-30（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
@@ -114,9 +115,9 @@
       "name": "unclecode/crawl4ai",
       "url": "https://github.com/unclecode/crawl4ai",
       "one_liner": "Open-source web crawler and scraper for LLMs and AI agents: any website into clean, LLM-ready Markdown. Run it yourself,",
-      "score": 72,
-      "stars": 86577,
-      "forks": 9013,
+      "score": 73,
+      "stars": 86617,
+      "forks": 9014,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "宽松",
@@ -134,8 +135,8 @@
       ],
       "sources": [
         "仓库：unclecode/crawl4ai",
-        "Star 86,577 / Fork 9,013",
-        "最近提交：2026-10-29（0 天前）",
+        "Star 86,617 / Fork 9,014",
+        "最近提交：2026-10-30（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：ai、ai-agents、crawler、data-extraction、llm、markdown"
@@ -150,9 +151,9 @@
       "url": "https://github.com/zylon-ai/private-gpt",
       "one_liner": "Complete API layer for private AI applications on local models: RAG, skills, tools, MCP, text-to-sql, and more. Works wi",
       "score": 71,
-      "stars": 57619,
+      "stars": 57622,
       "forks": 7620,
-      "days_since_push": 0,
+      "days_since_push": 1,
       "language": "Python",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -170,11 +171,45 @@
       ],
       "sources": [
         "仓库：zylon-ai/private-gpt",
-        "Star 57,619 / Fork 7,620",
-        "最近提交：2026-10-29（0 天前）",
+        "Star 57,622 / Fork 7,620",
+        "最近提交：2026-10-29（1 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：ai、ai-tools、on-premise"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "rocketride-org/rocketride-server",
+      "url": "https://github.com/rocketride-org/rocketride-server",
+      "one_liner": "High-performance AI pipeline engine with a C++ core and 50+ Python-extensible nodes. Build, debug, and scale LLM workflo",
+      "score": 70,
+      "stars": 18996,
+      "forks": 8163,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
+      "costs": [
+        "许可证：宽松，可闭源商用；无明显基础设施依赖"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：rocketride-org/rocketride-server",
+        "Star 18,996 / Fork 8,163",
+        "最近提交：2026-10-31（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：ai、cpp、data-pipeline、data-processing、machine-learning、mcp"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
@@ -186,9 +221,9 @@
       "url": "https://github.com/Evil0ctal/Douyin_TikTok_Download_API",
       "one_liner": "🚀 自托管的抖音、TikTok、B 站数据采集与无水印视频下载 API，支持 AI agent 通过 MCP 调用与离线语音转文字，Docker 一键部署。| Self-hosted TikTok, Douyin & Bilibili sc",
       "score": 68,
-      "stars": 20993,
-      "forks": 2923,
-      "days_since_push": 2,
+      "stars": 21002,
+      "forks": 2928,
+      "days_since_push": 3,
       "language": "Python",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -205,11 +240,45 @@
       ],
       "sources": [
         "仓库：Evil0ctal/Douyin_TikTok_Download_API",
-        "Star 20,993 / Fork 2,923",
-        "最近提交：2026-10-27（2 天前）",
+        "Star 21,002 / Fork 2,928",
+        "最近提交：2026-10-27（3 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：bilibili、crawler、data-collection、douyin、douyin-api、downloader"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "maximhq/bifrost",
+      "url": "https://github.com/maximhq/bifrost",
+      "one_liner": "Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa",
+      "score": 68,
+      "stars": 9233,
+      "forks": 1494,
+      "days_since_push": 0,
+      "language": "Go",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "提供调用链追踪与效果评测能力",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：maximhq/bifrost",
+        "Star 9,233 / Fork 1,494",
+        "最近提交：2026-10-31（0 天前）",
+        "主语言：Go",
+        "有正式 release，说明有发布纪律",
+        "topics：agent-gateway、ai-gateway、ai-governance、api-gateway、claude-code、coding-agents"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
@@ -221,8 +290,8 @@
       "url": "https://github.com/browser-use/browser-use",
       "one_liner": "Open-source Python library for AI browser agents, plus Browser Use Cloud: stealth browsers and a hosted agent API.",
       "score": 67,
-      "stars": 119543,
-      "forks": 13306,
+      "stars": 119599,
+      "forks": 13314,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "宽松",
@@ -239,8 +308,8 @@
       ],
       "sources": [
         "仓库：browser-use/browser-use",
-        "Star 119,543 / Fork 13,306",
-        "最近提交：2026-10-30（0 天前）",
+        "Star 119,599 / Fork 13,314",
+        "最近提交：2026-10-31（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：ai-agents、ai-tools、browser-agent、browser-automation、browser-use、cdp"
@@ -255,8 +324,8 @@
       "url": "https://github.com/google-gemini/gemini-cli",
       "one_liner": "An open-source AI agent that brings the power of Gemini directly into your terminal.",
       "score": 67,
-      "stars": 108626,
-      "forks": 14880,
+      "stars": 108637,
+      "forks": 14886,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "宽松",
@@ -273,8 +342,8 @@
       ],
       "sources": [
         "仓库：google-gemini/gemini-cli",
-        "Star 108,626 / Fork 14,880",
-        "最近提交：2026-10-30（0 天前）",
+        "Star 108,637 / Fork 14,886",
+        "最近提交：2026-10-31（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
         "topics：ai、ai-agents、cli、gemini、gemini-api、mcp-client"
@@ -289,8 +358,8 @@
       "url": "https://github.com/Panniantong/Agent-Reach",
       "one_liner": "Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongSh",
       "score": 67,
-      "stars": 106536,
-      "forks": 9458,
+      "stars": 106837,
+      "forks": 9499,
       "days_since_push": 5,
       "language": "Python",
       "license_tier": "宽松",
@@ -307,7 +376,7 @@
       ],
       "sources": [
         "仓库：Panniantong/Agent-Reach",
-        "Star 106,536 / Fork 9,458",
+        "Star 106,837 / Fork 9,499",
         "最近提交：2026-10-25（5 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
@@ -323,8 +392,8 @@
       "url": "https://github.com/thedotmack/claude-mem",
       "one_liner": "Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it",
       "score": 67,
-      "stars": 105186,
-      "forks": 9269,
+      "stars": 106300,
+      "forks": 9356,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "宽松",
@@ -340,7 +409,7 @@
       ],
       "sources": [
         "仓库：thedotmack/claude-mem",
-        "Star 105,186 / Fork 9,269",
+        "Star 106,300 / Fork 9,356",
         "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
@@ -356,9 +425,9 @@
       "url": "https://github.com/D4Vinci/Scrapling",
       "one_liner": "🕷️ The BEST Web Scraping framework that handles everything from a single request to a full-scale crawl! Don't be shy, jo",
       "score": 67,
-      "stars": 90374,
-      "forks": 9358,
-      "days_since_push": 0,
+      "stars": 90486,
+      "forks": 9368,
+      "days_since_push": 1,
       "language": "Python",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -373,8 +442,8 @@
       ],
       "sources": [
         "仓库：D4Vinci/Scrapling",
-        "Star 90,374 / Fork 9,358",
-        "最近提交：2026-10-29（0 天前）",
+        "Star 90,486 / Fork 9,368",
+        "最近提交：2026-10-29（1 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：ai、ai-scraping、automation、crawler、crawling、crawling-python"
@@ -389,8 +458,8 @@
       "url": "https://github.com/xerj-org/xerj",
       "one_liner": "AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM",
       "score": 67,
-      "stars": 17613,
-      "forks": 1356,
+      "stars": 17751,
+      "forks": 1374,
       "days_since_push": 0,
       "language": "Rust",
       "license_tier": "宽松",
@@ -408,8 +477,8 @@
       ],
       "sources": [
         "仓库：xerj-org/xerj",
-        "Star 17,613 / Fork 1,356",
-        "最近提交：2026-10-30（0 天前）",
+        "Star 17,751 / Fork 1,374",
+        "最近提交：2026-10-31（0 天前）",
         "主语言：Rust",
         "有正式 release，说明有发布纪律",
         "topics：agent-memory、ai-agents、bm25、claude-code、cli、code-search"
@@ -424,8 +493,8 @@
       "url": "https://github.com/koala73/worldmonitor",
       "one_liner": "Real-time global intelligence dashboard. AI-powered news aggregation, geopolitical monitoring, and infrastructure tracki",
       "score": 66,
-      "stars": 89777,
-      "forks": 13838,
+      "stars": 89810,
+      "forks": 13848,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "copyleft-strong",
@@ -441,7 +510,7 @@
       ],
       "sources": [
         "仓库：koala73/worldmonitor",
-        "Star 89,777 / Fork 13,838",
+        "Star 89,810 / Fork 13,848",
         "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
@@ -457,8 +526,8 @@
       "url": "https://github.com/ruvnet/ruflo",
       "one_liner": "🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinate autonomous workflows, and build convers",
       "score": 66,
-      "stars": 80214,
-      "forks": 9405,
+      "stars": 80303,
+      "forks": 9417,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "宽松",
@@ -474,7 +543,7 @@
       ],
       "sources": [
         "仓库：ruvnet/ruflo",
-        "Star 80,214 / Fork 9,405",
+        "Star 80,303 / Fork 9,417",
         "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
@@ -490,8 +559,8 @@
       "url": "https://github.com/headroomlabs-ai/headroom",
       "one_liner": "Compress tool outputs, logs, files, and RAG chunks before they reach the LLM. 20% fewer tokens for coding agents, 60-95%",
       "score": 66,
-      "stars": 78312,
-      "forks": 6107,
+      "stars": 78387,
+      "forks": 6111,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "宽松",
@@ -507,7 +576,7 @@
       ],
       "sources": [
         "仓库：headroomlabs-ai/headroom",
-        "Star 78,312 / Fork 6,107",
+        "Star 78,387 / Fork 6,111",
         "最近提交：2026-10-30（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
@@ -523,7 +592,7 @@
       "url": "https://github.com/siyuan-note/siyuan",
       "one_liner": "An open-source, privacy-first, self-hosted knowledge workspace where humans and AI agents work together 开源、隐私优先、自托管的知识工作",
       "score": 66,
-      "stars": 47000,
+      "stars": 47013,
       "forks": 3093,
       "days_since_push": 0,
       "language": "TypeScript",
@@ -541,7 +610,7 @@
       ],
       "sources": [
         "仓库：siyuan-note/siyuan",
-        "Star 47,000 / Fork 3,093",
+        "Star 47,013 / Fork 3,093",
         "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
@@ -553,13 +622,46 @@
       "decision": "不推荐：强 copyleft，商用路径不清晰"
     },
     {
+      "name": "AstrBotDevs/AstrBot",
+      "url": "https://github.com/AstrBotDevs/AstrBot",
+      "one_liner": "AI Agent Assistant & development framework that integrates lots of IM platforms, LLMs, plugins and AI feature, and can b",
+      "score": 66,
+      "stars": 45088,
+      "forks": 3309,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "copyleft-strong",
+      "license_commercial": "网络服务须开源",
+      "license_note": "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可",
+      "costs": [
+        "许可证：网络服务须开源（agpl-3.0）"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "有社区支持，问题可被快速响应"
+      ],
+      "sources": [
+        "仓库：AstrBotDevs/AstrBot",
+        "Star 45,088 / Fork 3,309",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、ai、astrbot、chatbot、chatgpt、discord"
+      ],
+      "risks": [
+        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
+      ],
+      "decision": "不推荐：强 copyleft，商用路径不清晰"
+    },
+    {
       "name": "bojieli/ai-agent-book",
       "url": "https://github.com/bojieli/ai-agent-book",
       "one_liner": "《深入理解 AI Agent：设计原理与工程实践》（李博杰 著）开源主仓库：全书正文、编译版 PDF 与按章配套代码",
       "score": 65,
-      "stars": 56640,
-      "forks": 6519,
-      "days_since_push": 21,
+      "stars": 56685,
+      "forks": 6535,
+      "days_since_push": 22,
       "language": "Python",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -574,8 +676,8 @@
       ],
       "sources": [
         "仓库：bojieli/ai-agent-book",
-        "Star 56,640 / Fork 6,519",
-        "最近提交：2026-10-08（21 天前）",
+        "Star 56,685 / Fork 6,535",
+        "最近提交：2026-10-08（22 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：agent、agent-memory、ai-agent、book、coding-agent、context-engineering"
@@ -590,9 +692,9 @@
       "url": "https://github.com/sansan0/TrendRadar",
       "one_liner": "⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, and smart alerts.🎯 告别信息过载，你的 AI 舆情监控助手与热",
       "score": 64,
-      "stars": 63308,
+      "stars": 63319,
       "forks": 24911,
-      "days_since_push": 0,
+      "days_since_push": 1,
       "language": "Python",
       "license_tier": "copyleft-strong",
       "license_commercial": "分发须开源",
@@ -609,8 +711,8 @@
       ],
       "sources": [
         "仓库：sansan0/TrendRadar",
-        "Star 63,308 / Fork 24,911",
-        "最近提交：2026-10-29（0 天前）",
+        "Star 63,319 / Fork 24,911",
+        "最近提交：2026-10-29（1 天前）",
         "主语言：Python",
         "topics：ai、bark、data-analysis、docker、hot-news、llm"
       ],
@@ -624,9 +726,9 @@
       "url": "https://github.com/DeusData/codebase-memory-mcp",
       "one_liner": "Local code intelligence for developers and AI agents. Connect code, docs and infrastructure in a persistent graph, with ",
       "score": 64,
-      "stars": 47824,
-      "forks": 3933,
-      "days_since_push": 1,
+      "stars": 47867,
+      "forks": 3937,
+      "days_since_push": 0,
       "language": "C",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -641,8 +743,8 @@
       ],
       "sources": [
         "仓库：DeusData/codebase-memory-mcp",
-        "Star 47,824 / Fork 3,933",
-        "最近提交：2026-10-29（1 天前）",
+        "Star 47,867 / Fork 3,937",
+        "最近提交：2026-10-30（0 天前）",
         "主语言：C",
         "有正式 release，说明有发布纪律",
         "topics：aider、ast、claude-code、code-analysis、code-intelligence、codex"
@@ -657,8 +759,8 @@
       "url": "https://github.com/reactive-resume/reactive-resume",
       "one_liner": "A one-of-a-kind resume builder that keeps your privacy in mind. Completely secure, customizable, portable, open-source a",
       "score": 64,
-      "stars": 45093,
-      "forks": 4895,
+      "stars": 45107,
+      "forks": 4900,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "宽松",
@@ -674,7 +776,7 @@
       ],
       "sources": [
         "仓库：reactive-resume/reactive-resume",
-        "Star 45,093 / Fork 4,895",
+        "Star 45,107 / Fork 4,900",
         "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
@@ -691,7 +793,7 @@
       "one_liner": "Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome",
       "score": 64,
       "stars": 41153,
-      "forks": 3565,
+      "forks": 3566,
       "days_since_push": 0,
       "language": "Rust",
       "license_tier": "宽松",
@@ -707,7 +809,7 @@
       ],
       "sources": [
         "仓库：codewhale-hq/Codewhale",
-        "Star 41,153 / Fork 3,565",
+        "Star 41,153 / Fork 3,566",
         "最近提交：2026-10-30（0 天前）",
         "主语言：Rust",
         "有正式 release，说明有发布纪律",
@@ -719,31 +821,101 @@
       "decision": "可考虑：先验证一个具体场景能否跑通"
     },
     {
-      "name": "career-ops-hq/career-ops",
-      "url": "https://github.com/career-ops-hq/career-ops",
-      "one_liner": "Open-source AI job search agent and job finder: scan job boards, score each job 1-5 against your CV before you apply, ta",
-      "score": 63,
-      "stars": 78777,
-      "forks": 14539,
+      "name": "1Panel-dev/MaxKB",
+      "url": "https://github.com/1Panel-dev/MaxKB",
+      "one_liner": "🔥 MaxKB is an open-source platform for building enterprise-grade agents.  强大易用的开源企业级智能体平台。",
+      "score": 64,
+      "stars": 23081,
+      "forks": 3207,
       "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "copyleft-strong",
+      "license_commercial": "分发须开源",
+      "license_note": "GPL：分发衍生作品须开源",
+      "costs": [
+        "许可证：分发须开源（gpl-3.0）",
+        "企业版收费：企业版需单独付费"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端"
+      ],
+      "sources": [
+        "仓库：1Panel-dev/MaxKB",
+        "Star 23,081 / Fork 3,207",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、agentic-ai、chatbot、deepseek-r1、knowledgebase、langchain"
+      ],
+      "risks": [
+        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
+      ],
+      "decision": "不推荐：强 copyleft，商用路径不清晰"
+    },
+    {
+      "name": "open-metadata/OpenMetadata",
+      "url": "https://github.com/open-metadata/OpenMetadata",
+      "one_liner": "The Open Context Layer for Data and AI ,  OpenMetadata is the open platform for building trusted data context and busine",
+      "score": 64,
+      "stars": 15636,
+      "forks": 2496,
+      "days_since_push": 0,
+      "language": "TypeScript",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
+      ],
+      "benefits": [
+        "可作为 MCP 服务接入任意客户端",
+        "提供调用链追踪与效果评测能力",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：open-metadata/OpenMetadata",
+        "Star 15,636 / Fork 2,496",
+        "最近提交：2026-10-31（0 天前）",
+        "主语言：TypeScript",
+        "有正式 release，说明有发布纪律",
+        "topics：context、context-layer、data-catalog、data-collaboration、data-contracts、data-discovery"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "firecrawl/firecrawl-mcp-server",
+      "url": "https://github.com/firecrawl/firecrawl-mcp-server",
+      "one_liner": "Official Firecrawl MCP server, the context API for AI agents: search, scrape, and interact with the web, plus parse, cra",
+      "score": 64,
+      "stars": 7729,
+      "forks": 921,
+      "days_since_push": 1,
       "language": "JavaScript",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
       "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
       "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
       ],
       "benefits": [
         "可支撑自主任务执行与编排",
-        "数据不出本地，隐私合规成本低"
+        "可作为 MCP 服务接入任意客户端",
+        "提供调用链追踪与效果评测能力",
+        "可承担网页/接口数据采集",
+        "提供程序化调用接口，可嵌入自有系统"
       ],
       "sources": [
-        "仓库：career-ops-hq/career-ops",
-        "Star 78,777 / Fork 14,539",
-        "最近提交：2026-10-30（0 天前）",
+        "仓库：firecrawl/firecrawl-mcp-server",
+        "Star 7,729 / Fork 921",
+        "最近提交：2026-10-29（1 天前）",
         "主语言：JavaScript",
         "有正式 release，说明有发布纪律",
-        "topics：agent-skills、ai-agent、ai-job-search、ats、career、career-ops"
+        "topics：batch-processing、claude、content-extraction、data-collection、firecrawl、firecrawl-ai"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
@@ -755,9 +927,9 @@
       "url": "https://github.com/feder-cr/invisible_dots",
       "one_liner": "Open-source, self-hosted alternative to OpenAI Dots, Grok Bot. Built to be undetectable by anti-bot systems.",
       "score": 63,
-      "stars": 32309,
-      "forks": 4736,
-      "days_since_push": 5,
+      "stars": 32315,
+      "forks": 4734,
+      "days_since_push": 6,
       "language": "TypeScript",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -772,11 +944,180 @@
       ],
       "sources": [
         "仓库：feder-cr/invisible_dots",
-        "Star 32,309 / Fork 4,736",
-        "最近提交：2026-10-25（5 天前）",
+        "Star 32,315 / Fork 4,734",
+        "最近提交：2026-10-25（6 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
         "topics：agent-skills、agentic-ai、ai-agent、ai-agents、ai-assistant、antidetect-browser"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "langchain4j/langchain4j",
+      "url": "https://github.com/langchain4j/langchain4j",
+      "one_liner": "LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unif",
+      "score": 63,
+      "stars": 13332,
+      "forks": 2647,
+      "days_since_push": 0,
+      "language": "Java",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本",
+        "企业版收费：企业版需单独付费"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可作为 MCP 服务接入任意客户端",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：langchain4j/langchain4j",
+        "Star 13,332 / Fork 2,647",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Java",
+        "有正式 release，说明有发布纪律",
+        "topics：anthropic、chatgpt、chroma、embeddings、gemini、gpt"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "dataelement/bisheng",
+      "url": "https://github.com/dataelement/bisheng",
+      "one_liner": "BISHENG is an open LLM devops platform for next generation Enterprise AI applications. Powerful and comprehensive featur",
+      "score": 63,
+      "stars": 12098,
+      "forks": 1990,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "企业版收费：企业版需单独付费"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "提供调用链追踪与效果评测能力"
+      ],
+      "sources": [
+        "仓库：dataelement/bisheng",
+        "Star 12,098 / Fork 1,990",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、ai、chatbot、enterprise、finetune、genai"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "ongridio/ongrid",
+      "url": "https://github.com/ongridio/ongrid",
+      "one_liner": "An ops AI Agent that understands your infrastructure, finds the root cause, and fixes it — right from Slack, Telegram, L",
+      "score": 63,
+      "stars": 1244,
+      "forks": 277,
+      "days_since_push": 0,
+      "language": "Go",
+      "license_tier": "copyleft-strong",
+      "license_commercial": "网络服务须开源",
+      "license_note": "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可",
+      "costs": [
+        "许可证：网络服务须开源（agpl-3.0）",
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "提供调用链追踪与效果评测能力",
+        "有社区支持，问题可被快速响应"
+      ],
+      "sources": [
+        "仓库：ongridio/ongrid",
+        "Star 1,244 / Fork 277",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Go",
+        "有正式 release，说明有发布纪律",
+        "topics：ai-agents、aiops、alerting、chatops、devops、golang"
+      ],
+      "risks": [
+        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
+      ],
+      "decision": "不推荐：强 copyleft，商用路径不清晰"
+    },
+    {
+      "name": "PostHog/posthog",
+      "url": "https://github.com/PostHog/posthog",
+      "one_liner": ":hedgehog: PostHog is the leading platform for building self-driving products. Our developer tools – AI observability, a",
+      "score": 62,
+      "stars": 40528,
+      "forks": 3567,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "custom",
+      "license_commercial": "需人工核对",
+      "license_note": "GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文",
+      "costs": [
+        "许可证：需人工核对（noassertion）"
+      ],
+      "benefits": [
+        "可作为 MCP 服务接入任意客户端",
+        "提供调用链追踪与效果评测能力",
+        "有社区支持，问题可被快速响应"
+      ],
+      "sources": [
+        "仓库：PostHog/posthog",
+        "Star 40,528 / Fork 3,567",
+        "最近提交：2026-10-31（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：ab-testing、ai-analytics、analytics、cdp、data-warehouse、experiments"
+      ],
+      "risks": [
+        "许可证需人工核对：GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文"
+      ],
+      "decision": "待核对：许可证为自定义条款（noassertion），需读原文确认商用边界"
+    },
+    {
+      "name": "deepset-ai/haystack",
+      "url": "https://github.com/deepset-ai/haystack",
+      "one_liner": "Open-source AI orchestration framework for building context-engineered, production-ready LLM applications. Design modula",
+      "score": 62,
+      "stars": 26893,
+      "forks": 3368,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "许可证：宽松，可闭源商用；无明显基础设施依赖"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端"
+      ],
+      "sources": [
+        "仓库：deepset-ai/haystack",
+        "Star 26,893 / Fork 3,368",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agent-framework、agentic-ai、agentic-rag、agents、ai、ai-agents"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
@@ -788,8 +1129,8 @@
       "url": "https://github.com/pascalorg/editor",
       "one_liner": "Open-source 3D architectural editor with a local CLI, MCP tools, and practical workflows for humans and AI agents.",
       "score": 62,
-      "stars": 25225,
-      "forks": 3139,
+      "stars": 25236,
+      "forks": 3140,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "宽松",
@@ -805,11 +1146,111 @@
       ],
       "sources": [
         "仓库：pascalorg/editor",
-        "Star 25,225 / Fork 3,139",
-        "最近提交：2026-10-29（0 天前）",
+        "Star 25,236 / Fork 3,140",
+        "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
         "topics：3d、agent-skills、ai-agents、architecture、bim、cad"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "MervinPraison/PraisonAI",
+      "url": "https://github.com/MervinPraison/PraisonAI",
+      "one_liner": "PraisonAI 🦞 — Hire a 24/7 AI Workforce. Stop writing boilerplate and start shipping autonomous self-improving agents tha",
+      "score": 62,
+      "stars": 9310,
+      "forks": 1498,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
+      "costs": [
+        "许可证：宽松，可闭源商用；无明显基础设施依赖"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：MervinPraison/PraisonAI",
+        "Star 9,310 / Fork 1,498",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agents、ai、ai-agent-framework、ai-agent-sdk、ai-agents、ai-agents-framework"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "strands-agents/harness-sdk",
+      "url": "https://github.com/strands-agents/harness-sdk",
+      "one_liner": "Build an agent harness and control it end-to-end. Open-source SDK for production AI agents in Python & TypeScript - any ",
+      "score": 62,
+      "stars": 9007,
+      "forks": 1454,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：strands-agents/harness-sdk",
+        "Star 9,007 / Fork 1,454",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agent-framework、agentic、agentic-ai、agents、ai、ai-agents"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "可考虑：先验证一个具体场景能否跑通"
+    },
+    {
+      "name": "langroid/langroid",
+      "url": "https://github.com/langroid/langroid",
+      "one_liner": "Harness LLMs with Multi-Agent Programming",
+      "score": 62,
+      "stars": 4122,
+      "forks": 427,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
+      "costs": [
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "提供程序化调用接口，可嵌入自有系统",
+        "数据不出本地，隐私合规成本低"
+      ],
+      "sources": [
+        "仓库：langroid/langroid",
+        "Star 4,122 / Fork 427",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agents、ai、chatgpt、function-calling、gpt、gpt-4"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
@@ -821,8 +1262,8 @@
       "url": "https://github.com/earendil-works/pi",
       "one_liner": "AI agent toolkit: unified LLM API, agent loop, TUI, coding agent CLI",
       "score": 61,
-      "stars": 118934,
-      "forks": 15254,
+      "stars": 119031,
+      "forks": 15278,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "宽松",
@@ -838,7 +1279,7 @@
       ],
       "sources": [
         "仓库：earendil-works/pi",
-        "Star 118,934 / Fork 15,254",
+        "Star 119,031 / Fork 15,278",
         "最近提交：2026-10-30（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律"
@@ -853,8 +1294,8 @@
       "url": "https://github.com/nexu-io/open-design",
       "one_liner": "The 1st Collaborative AI Design Agent Workspace. Local-first and open source. Create motion, prototypes, websites, apps,",
       "score": 61,
-      "stars": 104965,
-      "forks": 11973,
+      "stars": 105049,
+      "forks": 11982,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "宽松",
@@ -869,11 +1310,43 @@
       ],
       "sources": [
         "仓库：nexu-io/open-design",
-        "Star 104,965 / Fork 11,973",
-        "最近提交：2026-10-30（0 天前）",
+        "Star 105,049 / Fork 11,982",
+        "最近提交：2026-10-31（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
         "topics：agent-skills、ai-design、byok、claude-code-for-design、claude-design、codex-design"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
+      "name": "infiniflow/ragflow",
+      "url": "https://github.com/infiniflow/ragflow",
+      "one_liner": "RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine that fuses cutting-edge RAG with Agent capa",
+      "score": 61,
+      "stars": 93224,
+      "forks": 11187,
+      "days_since_push": 0,
+      "language": "Go",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排"
+      ],
+      "sources": [
+        "仓库：infiniflow/ragflow",
+        "Star 93,224 / Fork 11,187",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Go",
+        "有正式 release，说明有发布纪律",
+        "topics：agent-harness、agentic-ai、agentic-nagive、agentic-retrieval、agentic-search、ai"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
@@ -885,8 +1358,8 @@
       "url": "https://github.com/lobehub/lobehub",
       "one_liner": "🤯 LobeHub is your Chief Agent Operator, organizing your agents into 7×24 operations by hiring, scheduling, and reporting",
       "score": 61,
-      "stars": 83600,
-      "forks": 16010,
+      "stars": 83617,
+      "forks": 16019,
       "days_since_push": 0,
       "language": "TypeScript",
       "license_tier": "custom",
@@ -902,8 +1375,8 @@
       ],
       "sources": [
         "仓库：lobehub/lobehub",
-        "Star 83,600 / Fork 16,010",
-        "最近提交：2026-10-30（0 天前）",
+        "Star 83,617 / Fork 16,019",
+        "最近提交：2026-10-31（0 天前）",
         "主语言：TypeScript",
         "有正式 release，说明有发布纪律",
         "topics：agent、agent-collaboration、agent-harness、ai、cao、chatgpt"
@@ -918,8 +1391,8 @@
       "url": "https://github.com/zhayujie/CowAgent",
       "one_liner": "Open-source personal AI assistant & Agent Harness. Plans tasks, runs tools and skills, self-evolves with memory and know",
       "score": 61,
-      "stars": 47687,
-      "forks": 10411,
+      "stars": 47699,
+      "forks": 10416,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "宽松",
@@ -934,7 +1407,7 @@
       ],
       "sources": [
         "仓库：zhayujie/CowAgent",
-        "Star 47,687 / Fork 10,411",
+        "Star 47,699 / Fork 10,416",
         "最近提交：2026-10-30（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
@@ -946,12 +1419,76 @@
       "decision": "观望：作为备选，先看同赛道更高分的方案"
     },
     {
+      "name": "LibreChat-AI/LibreChat",
+      "url": "https://github.com/LibreChat-AI/LibreChat",
+      "one_liner": "Enhanced ChatGPT Clone: Features Agents, MCP, Skills, DeepSeek, Anthropic, AWS, OpenAI, Responses API, Azure, Groq, o1, ",
+      "score": 61,
+      "stars": 46519,
+      "forks": 9562,
+      "days_since_push": 0,
+      "language": "TypeScript",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
+      "costs": [
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
+      ],
+      "benefits": [
+        "可作为 MCP 服务接入任意客户端",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：LibreChat-AI/LibreChat",
+        "Star 46,519 / Fork 9,562",
+        "最近提交：2026-10-31（0 天前）",
+        "主语言：TypeScript",
+        "有正式 release，说明有发布纪律",
+        "topics：ai、anthropic、artifacts、aws、azure、chatgpt"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
+      "name": "patchy631/ai-engineering-hub",
+      "url": "https://github.com/patchy631/ai-engineering-hub",
+      "one_liner": "In-depth tutorials on LLMs, RAGs and real-world AI agent applications.",
+      "score": 61,
+      "stars": 38519,
+      "forks": 6346,
+      "days_since_push": 0,
+      "language": "Jupyter Notebook",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
+      "costs": [
+        "工程：无正式 release，升级需自行评估破坏性变更"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端"
+      ],
+      "sources": [
+        "仓库：patchy631/ai-engineering-hub",
+        "Star 38,519 / Fork 6,346",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Jupyter Notebook",
+        "topics：agents、ai、llms、machine-learning、mcp、rag"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
       "name": "HKUDS/Vibe-Trading",
       "url": "https://github.com/HKUDS/Vibe-Trading",
       "one_liner": "\"Vibe-Trading: Your Personal Trading Agent\"",
       "score": 61,
-      "stars": 37184,
-      "forks": 6009,
+      "stars": 37237,
+      "forks": 6012,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "宽松",
@@ -966,7 +1503,7 @@
       ],
       "sources": [
         "仓库：HKUDS/Vibe-Trading",
-        "Star 37,184 / Fork 6,009",
+        "Star 37,237 / Fork 6,012",
         "最近提交：2026-10-30（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
@@ -982,9 +1519,9 @@
       "url": "https://github.com/oraios/serena",
       "one_liner": "A powerful MCP toolkit for coding, providing semantic retrieval and editing capabilities  - the IDE for your agent",
       "score": 61,
-      "stars": 30866,
-      "forks": 2104,
-      "days_since_push": 1,
+      "stars": 30880,
+      "forks": 2107,
+      "days_since_push": 2,
       "language": "Python",
       "license_tier": "custom",
       "license_commercial": "需人工核对",
@@ -999,8 +1536,8 @@
       ],
       "sources": [
         "仓库：oraios/serena",
-        "Star 30,866 / Fork 2,104",
-        "最近提交：2026-10-28（1 天前）",
+        "Star 30,880 / Fork 2,107",
+        "最近提交：2026-10-28（2 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：agent、ai、ai-coding、claude、claude-code、codex"
@@ -1011,12 +1548,178 @@
       "decision": "待核对：许可证为自定义条款（noassertion），需读原文确认商用边界"
     },
     {
+      "name": "TencentCloud/TencentDB-Agent-Memory",
+      "url": "https://github.com/TencentCloud/TencentDB-Agent-Memory",
+      "one_liner": "TencentDB Agent Memory is a team-level memory hub for AI Agents — turning conversations, docs, and code into four reusab",
+      "score": 61,
+      "stars": 30271,
+      "forks": 2935,
+      "days_since_push": 2,
+      "language": "TypeScript",
+      "license_tier": "custom",
+      "license_commercial": "需人工核对",
+      "license_note": "GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文",
+      "costs": [
+        "许可证：需人工核对（noassertion）"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "数据不出本地，隐私合规成本低"
+      ],
+      "sources": [
+        "仓库：TencentCloud/TencentDB-Agent-Memory",
+        "Star 30,271 / Fork 2,935",
+        "最近提交：2026-10-28（2 天前）",
+        "主语言：TypeScript",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、ai-agent、embedding、llm、local-first、long-term-memory"
+      ],
+      "risks": [
+        "许可证需人工核对：GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文"
+      ],
+      "decision": "待核对：许可证为自定义条款（noassertion），需读原文确认商用边界"
+    },
+    {
+      "name": "NanmiCoder/cc-haha",
+      "url": "https://github.com/NanmiCoder/cc-haha",
+      "one_liner": "本地优先的跨平台 Claude Code / AI Agent 桌面工作台：多 Agent 协作、Git Worktree、代码 Diff、技能市场、多模型、Computer Use、桌面宠物；支持微信、飞书、钉钉及 H5 等远程访问。 |",
+      "score": 61,
+      "stars": 15239,
+      "forks": 8609,
+      "days_since_push": 0,
+      "language": "TypeScript",
+      "license_tier": "custom",
+      "license_commercial": "需人工核对",
+      "license_note": "GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文",
+      "costs": [
+        "许可证：需人工核对（noassertion）"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "数据不出本地，隐私合规成本低"
+      ],
+      "sources": [
+        "仓库：NanmiCoder/cc-haha",
+        "Star 15,239 / Fork 8,609",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：TypeScript",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、ai、ai-agent、anthropic、claude、claude-code"
+      ],
+      "risks": [
+        "许可证需人工核对：GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文"
+      ],
+      "decision": "待核对：许可证为自定义条款（noassertion），需读原文确认商用边界"
+    },
+    {
+      "name": "volcengine/OpenViking",
+      "url": "https://github.com/volcengine/OpenViking",
+      "one_liner": "Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.",
+      "score": 60,
+      "stars": 41210,
+      "forks": 3344,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "copyleft-strong",
+      "license_commercial": "网络服务须开源",
+      "license_note": "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可",
+      "costs": [
+        "许可证：网络服务须开源（agpl-3.0）"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排"
+      ],
+      "sources": [
+        "仓库：volcengine/OpenViking",
+        "Star 41,210 / Fork 3,344",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agent-context、agent-memory、agent-plugins、agentic-rag、context-database、dsh-plugin"
+      ],
+      "risks": [
+        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
+      ],
+      "decision": "不推荐：强 copyleft，商用路径不清晰"
+    },
+    {
+      "name": "ToolJet/ToolJet",
+      "url": "https://github.com/ToolJet/ToolJet",
+      "one_liner": "Open-source foundation of ToolJet AI - the enterprise app generation platform for internal tools, dashboards, business a",
+      "score": 60,
+      "stars": 41149,
+      "forks": 5506,
+      "days_since_push": 0,
+      "language": "HTML",
+      "license_tier": "copyleft-strong",
+      "license_commercial": "网络服务须开源",
+      "license_note": "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可",
+      "costs": [
+        "许可证：网络服务须开源（agpl-3.0）",
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本",
+        "企业版收费：企业版需单独付费"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端"
+      ],
+      "sources": [
+        "仓库：ToolJet/ToolJet",
+        "Star 41,149 / Fork 5,506",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：HTML",
+        "有正式 release，说明有发布纪律",
+        "topics：ai-app-builder、docker、internal-applications、internal-project、internal-tool、internal-tools"
+      ],
+      "risks": [
+        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
+      ],
+      "decision": "不推荐：强 copyleft，商用路径不清晰"
+    },
+    {
+      "name": "khoj-ai/khoj",
+      "url": "https://github.com/khoj-ai/khoj",
+      "one_liner": "Your AI second brain. Self-hostable. Get answers from the web or your docs. Build custom agents, schedule automations, d",
+      "score": 60,
+      "stars": 37910,
+      "forks": 2529,
+      "days_since_push": 89,
+      "language": "Python",
+      "license_tier": "copyleft-strong",
+      "license_commercial": "网络服务须开源",
+      "license_note": "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可",
+      "costs": [
+        "许可证：网络服务须开源（agpl-3.0）",
+        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "数据不出本地，隐私合规成本低"
+      ],
+      "sources": [
+        "仓库：khoj-ai/khoj",
+        "Star 37,910 / Fork 2,529",
+        "最近提交：2026-08-02（89 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、ai、assistant、chat、chatgpt、emacs"
+      ],
+      "risks": [
+        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
+      ],
+      "decision": "不推荐：强 copyleft，商用路径不清晰"
+    },
+    {
       "name": "ccfos/nightingale",
       "url": "https://github.com/ccfos/nightingale",
       "one_liner": "Open-source, self-hosted alerting for metrics, logs, and databases. Includes a built-in AI agent and MCP server.",
       "score": 60,
-      "stars": 13417,
-      "forks": 1794,
+      "stars": 13418,
+      "forks": 1795,
       "days_since_push": 0,
       "language": "Go",
       "license_tier": "宽松",
@@ -1032,7 +1735,7 @@
       ],
       "sources": [
         "仓库：ccfos/nightingale",
-        "Star 13,417 / Fork 1,794",
+        "Star 13,418 / Fork 1,795",
         "最近提交：2026-10-30（0 天前）",
         "主语言：Go",
         "有正式 release，说明有发布纪律",
@@ -1044,13 +1747,78 @@
       "decision": "观望：作为备选，先看同赛道更高分的方案"
     },
     {
+      "name": "MemTensor/MemOS",
+      "url": "https://github.com/MemTensor/MemOS",
+      "one_liner": "Self-evolving memory OS for LLM & AI Agents: ultra-persistent memory, hybrid-retrieval, and cross-task skill reuse, with",
+      "score": 60,
+      "stars": 12201,
+      "forks": 1099,
+      "days_since_push": 1,
+      "language": "TypeScript",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "许可证：宽松，可闭源商用；无明显基础设施依赖"
+      ],
+      "benefits": [
+        "解决知识注入与检索问题",
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端"
+      ],
+      "sources": [
+        "仓库：MemTensor/MemOS",
+        "Star 12,201 / Fork 1,099",
+        "最近提交：2026-10-29（1 天前）",
+        "主语言：TypeScript",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、agentic-ai、ai、ai-agents、chatgpt、claude"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
+      "name": "aaif-goose/goose",
+      "url": "https://github.com/aaif-goose/goose",
+      "one_liner": "an open source, extensible AI agent that goes beyond code suggestions - install, execute, edit, and test with any LLM",
+      "score": 59,
+      "stars": 55985,
+      "forks": 6504,
+      "days_since_push": 0,
+      "language": "Rust",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端"
+      ],
+      "sources": [
+        "仓库：aaif-goose/goose",
+        "Star 55,985 / Fork 6,504",
+        "最近提交：2026-10-31（0 天前）",
+        "主语言：Rust",
+        "有正式 release，说明有发布纪律",
+        "topics：acp、ai、ai-agents、mcp"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
       "name": "modelcontextprotocol/python-sdk",
       "url": "https://github.com/modelcontextprotocol/python-sdk",
       "one_liner": "The official Python SDK for Model Context Protocol servers and clients",
       "score": 59,
-      "stars": 24710,
-      "forks": 4091,
-      "days_since_push": 2,
+      "stars": 24714,
+      "forks": 4095,
+      "days_since_push": 3,
       "language": "Python",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -1064,11 +1832,110 @@
       ],
       "sources": [
         "仓库：modelcontextprotocol/python-sdk",
-        "Star 24,710 / Fork 4,091",
-        "最近提交：2026-10-27（2 天前）",
+        "Star 24,714 / Fork 4,095",
+        "最近提交：2026-10-27（3 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：mcp、mcp-client、mcp-server、python"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
+      "name": "mcp-use/mcp-use",
+      "url": "https://github.com/mcp-use/mcp-use",
+      "one_liner": "The fullstack MCP framework to develop MCP Apps for ChatGPT / Claude & MCP Servers for AI Agents.",
+      "score": 59,
+      "stars": 10830,
+      "forks": 1532,
+      "days_since_push": 0,
+      "language": "TypeScript",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
+      "costs": [
+        "许可证：宽松，可闭源商用；无明显基础设施依赖"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：mcp-use/mcp-use",
+        "Star 10,830 / Fork 1,532",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：TypeScript",
+        "有正式 release，说明有发布纪律",
+        "topics：agent-plugins、agentic-framework、ai、apps-sdk、chatgpt、claude-code"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
+      "name": "mobile-next/mobile-mcp",
+      "url": "https://github.com/mobile-next/mobile-mcp",
+      "one_liner": "Mobile MCP: let AI agents drive your iOS and Android apps. MCP server for simulators, emulators and real devices. Works ",
+      "score": 59,
+      "stars": 10153,
+      "forks": 912,
+      "days_since_push": 0,
+      "language": "TypeScript",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "许可证：宽松，可闭源商用；无明显基础设施依赖"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "可作为 MCP 服务接入任意客户端",
+        "提供程序化调用接口，可嵌入自有系统"
+      ],
+      "sources": [
+        "仓库：mobile-next/mobile-mcp",
+        "Star 10,153 / Fork 912",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：TypeScript",
+        "有正式 release，说明有发布纪律",
+        "topics：agent、android、android-automation、appium-alternative、claude-code、codex"
+      ],
+      "risks": [
+        "未发现明显红线，但依赖评估仍需自行验证"
+      ],
+      "decision": "观望：作为备选，先看同赛道更高分的方案"
+    },
+    {
+      "name": "HolmesGPT/holmesgpt",
+      "url": "https://github.com/HolmesGPT/holmesgpt",
+      "one_liner": "SRE Agent - CNCF Sandbox Project",
+      "score": 59,
+      "stars": 3735,
+      "forks": 563,
+      "days_since_push": 0,
+      "language": "Python",
+      "license_tier": "宽松",
+      "license_commercial": "可闭源商用",
+      "license_note": "含专利授权，最被企业接受",
+      "costs": [
+        "许可证：宽松，可闭源商用；无明显基础设施依赖"
+      ],
+      "benefits": [
+        "可支撑自主任务执行与编排",
+        "提供调用链追踪与效果评测能力",
+        "有社区支持，问题可被快速响应"
+      ],
+      "sources": [
+        "仓库：HolmesGPT/holmesgpt",
+        "Star 3,735 / Fork 563",
+        "最近提交：2026-10-30（0 天前）",
+        "主语言：Python",
+        "有正式 release，说明有发布纪律",
+        "topics：aiops、chatbot、chatops、devops、devops-tools、incident"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
@@ -1080,8 +1947,8 @@
       "url": "https://github.com/NousResearch/hermes-agent",
       "one_liner": "The agent that grows with you",
       "score": 58,
-      "stars": 258653,
-      "forks": 56820,
+      "stars": 258888,
+      "forks": 56911,
       "days_since_push": 0,
       "language": "Python",
       "license_tier": "宽松",
@@ -1095,8 +1962,8 @@
       ],
       "sources": [
         "仓库：NousResearch/hermes-agent",
-        "Star 258,653 / Fork 56,820",
-        "最近提交：2026-10-30（0 天前）",
+        "Star 258,888 / Fork 56,911",
+        "最近提交：2026-10-31（0 天前）",
         "主语言：Python",
         "有正式 release，说明有发布纪律",
         "topics：ai、ai-agent、ai-agents、anthropic、chatgpt、claude"
@@ -1111,9 +1978,9 @@
       "url": "https://github.com/msitarzewski/agency-agents",
       "one_liner": "A complete AI agency at your fingertips - From frontend wizards to Reddit community ninjas, from whimsy injectors to rea",
       "score": 58,
-      "stars": 165273,
-      "forks": 26713,
-      "days_since_push": 5,
+      "stars": 165509,
+      "forks": 26781,
+      "days_since_push": 6,
       "language": "Shell",
       "license_tier": "宽松",
       "license_commercial": "可闭源商用",
@@ -1128,831 +1995,9 @@
       ],
       "sources": [
         "仓库：msitarzewski/agency-agents",
-        "Star 165,273 / Fork 26,713",
-        "最近提交：2026-10-25（5 天前）",
+        "Star 165,509 / Fork 26,781",
+        "最近提交：2026-10-25（6 天前）",
         "主语言：Shell"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "bytedance/UI-TARS-desktop",
-      "url": "https://github.com/bytedance/UI-TARS-desktop",
-      "one_liner": "The Open-Source Multimodal AI Agent Stack: Connecting Cutting-Edge AI Models and Agent Infra",
-      "score": 58,
-      "stars": 39444,
-      "forks": 3999,
-      "days_since_push": 21,
-      "language": "TypeScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：bytedance/UI-TARS-desktop",
-        "Star 39,444 / Fork 3,999",
-        "最近提交：2026-10-09（21 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：agent、agent-tars、browser-use、computer-use、cowork、gui-agent"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "CopilotKit/CopilotKit",
-      "url": "https://github.com/CopilotKit/CopilotKit",
-      "one_liner": "The Frontend Stack for Agents & Generative UI. React, Angular, Mobile, Slack, and more.  Makers of the AG-UI Protocol",
-      "score": 58,
-      "stars": 38379,
-      "forks": 4792,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "有社区支持，问题可被快速响应"
-      ],
-      "sources": [
-        "仓库：CopilotKit/CopilotKit",
-        "Star 38,379 / Fork 4,792",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：agent、agent-native、agentic-ai、agents、ai、ai-agent"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "can1357/oh-my-pi",
-      "url": "https://github.com/can1357/oh-my-pi",
-      "one_liner": "⌥ Coding agent with the IDE wired in. Built by Stencil Labs.",
-      "score": 58,
-      "stars": 37153,
-      "forks": 4176,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：can1357/oh-my-pi",
-        "Star 37,153 / Fork 4,176",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：ai-agent、ai-coding-agent、anthropic、bun、claude、cli"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "agentscope-ai/QwenPaw",
-      "url": "https://github.com/agentscope-ai/QwenPaw",
-      "one_liner": "Your Personal AI Assistant; easy to install, deploy on your own machine or on the cloud; supports multiple chat apps wit",
-      "score": 58,
-      "stars": 36987,
-      "forks": 3239,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：agentscope-ai/QwenPaw",
-        "Star 36,987 / Fork 3,239",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：agent、agent-harness、agentscope、ai-agent、ai-agents、chatbot"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "ZhuLinsen/daily_stock_analysis",
-      "url": "https://github.com/ZhuLinsen/daily_stock_analysis",
-      "one_liner": "LLM 驱动的多市场股票智能分析系统：多源行情、实时新闻、决策看板与自动推送，支持零成本定时运行。  LLM-powered multi-market stock analysis system with multi-source mark",
-      "score": 57,
-      "stars": 67282,
-      "forks": 55748,
-      "days_since_push": 4,
-      "language": "Python",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：ZhuLinsen/daily_stock_analysis",
-        "Star 67,282 / Fork 55,748",
-        "最近提交：2026-10-25（4 天前）",
-        "主语言：Python",
-        "有正式 release，说明有发布纪律",
-        "topics：a-stock、ai-agent、aigc、llm、quant、quantitative-finance"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "assafelovic/gpt-researcher",
-      "url": "https://github.com/assafelovic/gpt-researcher",
-      "one_liner": "An autonomous agent that conducts deep research on any data using any LLM providers",
-      "score": 57,
-      "stars": 30376,
-      "forks": 4150,
-      "days_since_push": 19,
-      "language": "Python",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：assafelovic/gpt-researcher",
-        "Star 30,376 / Fork 4,150",
-        "最近提交：2026-10-10（19 天前）",
-        "主语言：Python",
-        "有正式 release，说明有发布纪律",
-        "topics：agent、ai、automation、deepresearch、llms、mcp"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "t8y2/dbx",
-      "url": "https://github.com/t8y2/dbx",
-      "one_liner": "25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB",
-      "score": 57,
-      "stars": 28234,
-      "forks": 2572,
-      "days_since_push": 0,
-      "language": "Rust",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可作为 MCP 服务接入任意客户端",
-        "提供程序化调用接口，可嵌入自有系统"
-      ],
-      "sources": [
-        "仓库：t8y2/dbx",
-        "Star 28,234 / Fork 2,572",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：Rust",
-        "有正式 release，说明有发布纪律",
-        "topics：ai、cli、clickhouse、database、database-client、database-management"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "activepieces/activepieces",
-      "url": "https://github.com/activepieces/activepieces",
-      "one_liner": "AI Agents & MCPs & AI Workflow Automation • (~400 MCP servers for AI agents) • AI Automation / AI Agent with MCPs • AI W",
-      "score": 57,
-      "stars": 25291,
-      "forks": 4408,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "custom",
-      "license_commercial": "需人工核对",
-      "license_note": "GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文",
-      "costs": [
-        "许可证：需人工核对（noassertion）"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：activepieces/activepieces",
-        "Star 25,291 / Fork 4,408",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：ai-agent、ai-agent-tools、ai-agents、ai-agents-framework、mcp、mcp-server"
-      ],
-      "risks": [
-        "许可证需人工核对：GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文"
-      ],
-      "decision": "待核对：许可证为自定义条款（noassertion），需读原文确认商用边界"
-    },
-    {
-      "name": "liketrek/TREK",
-      "url": "https://github.com/liketrek/TREK",
-      "one_liner": "The most complete open-source travel planner: real-time collaboration, bookings, budgets, packing lists, journals, offli",
-      "score": 56,
-      "stars": 15237,
-      "forks": 1310,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "copyleft-strong",
-      "license_commercial": "网络服务须开源",
-      "license_note": "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可",
-      "costs": [
-        "许可证：网络服务须开源（agpl-3.0）",
-        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
-      ],
-      "benefits": [
-        "可作为 MCP 服务接入任意客户端",
-        "数据不出本地，隐私合规成本低"
-      ],
-      "sources": [
-        "仓库：liketrek/TREK",
-        "Star 15,237 / Fork 1,310",
-        "最近提交：2026-10-29（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：budget-tracker、collaborative、docker、itinerary、mcp-server、offline-first"
-      ],
-      "risks": [
-        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
-      ],
-      "decision": "不推荐：强 copyleft，商用路径不清晰"
-    },
-    {
-      "name": "Shubhamsaboo/awesome-llm-apps",
-      "url": "https://github.com/Shubhamsaboo/awesome-llm-apps",
-      "one_liner": "100+ AI Agents, Agent Skills and RAG Apps - Free and Open Source.",
-      "score": 55,
-      "stars": 143474,
-      "forks": 21108,
-      "days_since_push": 7,
-      "language": "Python",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高",
-        "工程：无正式 release，升级需自行评估破坏性变更"
-      ],
-      "benefits": [
-        "解决知识注入与检索问题",
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：Shubhamsaboo/awesome-llm-apps",
-        "Star 143,474 / Fork 21,108",
-        "最近提交：2026-10-22（7 天前）",
-        "主语言：Python",
-        "topics：agents、llms、python、rag"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "addyosmani/agent-skills",
-      "url": "https://github.com/addyosmani/agent-skills",
-      "one_liner": "Production-grade engineering skills for AI coding agents.",
-      "score": 55,
-      "stars": 111835,
-      "forks": 11707,
-      "days_since_push": 1,
-      "language": "JavaScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：addyosmani/agent-skills",
-        "Star 111,835 / Fork 11,707",
-        "最近提交：2026-10-29（1 天前）",
-        "主语言：JavaScript",
-        "有正式 release，说明有发布纪律",
-        "topics：agent-skills、antigravity、claude-code、codex、cursor、skills"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "Leonxlnx/taste-skill",
-      "url": "https://github.com/Leonxlnx/taste-skill",
-      "one_liner": "Agent skills that give coding agents taste: art direction, reference images and a browser check instead of generic AI pa",
-      "score": 55,
-      "stars": 105875,
-      "forks": 7155,
-      "days_since_push": 0,
-      "language": "JavaScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：Leonxlnx/taste-skill",
-        "Star 105,875 / Fork 7,155",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：JavaScript",
-        "有正式 release，说明有发布纪律",
-        "topics：agent-skills、ai-agents、anti-slop、claude-code、codex、cursor"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "mksglu/context-mode",
-      "url": "https://github.com/mksglu/context-mode",
-      "one_liner": "Context window optimization for AI coding agents. Sandboxes tool output (98% reduction), persists session memory, and   ",
-      "score": 55,
-      "stars": 32891,
-      "forks": 2274,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "custom",
-      "license_commercial": "需人工核对",
-      "license_note": "GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文",
-      "costs": [
-        "许可证：需人工核对（noassertion）"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：mksglu/context-mode",
-        "Star 32,891 / Fork 2,274",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：antigravity、claude、claude-code、claude-code-hooks、claude-code-plugins、claude-code-skill"
-      ],
-      "risks": [
-        "许可证需人工核对：GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文"
-      ],
-      "decision": "待核对：许可证为自定义条款（noassertion），需读原文确认商用边界"
-    },
-    {
-      "name": "googleapis/mcp-toolbox",
-      "url": "https://github.com/googleapis/mcp-toolbox",
-      "one_liner": "MCP Toolbox for Databases is an open source MCP server for databases.",
-      "score": 55,
-      "stars": 16761,
-      "forks": 1785,
-      "days_since_push": 0,
-      "language": "Go",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：googleapis/mcp-toolbox",
-        "Star 16,761 / Fork 1,785",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：Go",
-        "有正式 release，说明有发布纪律",
-        "topics：agent、agents、ai、bigquery、clickhouse、cockroachdb"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "firecrawl/firecrawl",
-      "url": "https://github.com/firecrawl/firecrawl",
-      "one_liner": "Supercharge your AI agents with data from the web and beyond. Building the library for superintelligence. 🔥",
-      "score": 54,
-      "stars": 196873,
-      "forks": 10396,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "copyleft-strong",
-      "license_commercial": "网络服务须开源",
-      "license_note": "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可",
-      "costs": [
-        "许可证：网络服务须开源（agpl-3.0）",
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可承担网页/接口数据采集"
-      ],
-      "sources": [
-        "仓库：firecrawl/firecrawl",
-        "Star 196,873 / Fork 10,396",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：ai、ai-agents、ai-crawler、ai-scraping、ai-search、crawler"
-      ],
-      "risks": [
-        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
-      ],
-      "decision": "不推荐：强 copyleft，商用路径不清晰"
-    },
-    {
-      "name": "x1xhlol/system-prompts-and-models-of-ai-tools",
-      "url": "https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools",
-      "one_liner": "FULL Augment Code, Claude Code, Cluely, CodeBuddy, Comet, Cursor, Devin AI, Junie, Kiro, Leap.new, Lovable, Manus, Notio",
-      "score": 54,
-      "stars": 144353,
-      "forks": 34705,
-      "days_since_push": 17,
-      "language": null,
-      "license_tier": "copyleft-strong",
-      "license_commercial": "分发须开源",
-      "license_note": "GPL：分发衍生作品须开源",
-      "costs": [
-        "许可证：分发须开源（gpl-3.0）",
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高",
-        "工程：无正式 release，升级需自行评估破坏性变更"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：x1xhlol/system-prompts-and-models-of-ai-tools",
-        "Star 144,353 / Fork 34,705",
-        "最近提交：2026-10-12（17 天前）",
-        "topics：ai、bolt、cluely、copilot、cursor、cursorai"
-      ],
-      "risks": [
-        "强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可"
-      ],
-      "decision": "不推荐：强 copyleft，商用路径不清晰"
-    },
-    {
-      "name": "thedaviddias/Front-End-Checklist",
-      "url": "https://github.com/thedaviddias/Front-End-Checklist",
-      "one_liner": "🗂 The essential checklist for modern web development, for humans and AI agents",
-      "score": 54,
-      "stars": 74603,
-      "forks": 6770,
-      "days_since_push": 23,
-      "language": "MDX",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：thedaviddias/Front-End-Checklist",
-        "Star 74,603 / Fork 6,770",
-        "最近提交：2026-10-06（23 天前）",
-        "主语言：MDX",
-        "有正式 release，说明有发布纪律",
-        "topics：ai-agent、ai-agents、checklist、css、front-end-developer-tool、front-end-development"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "hugohe3/ppt-master",
-      "url": "https://github.com/hugohe3/ppt-master",
-      "one_liner": "AI turns documents or topics into real, native PowerPoint decks—with native shapes, transitions and animations, data-bac",
-      "score": 54,
-      "stars": 71110,
-      "forks": 5545,
-      "days_since_push": 0,
-      "language": "Python",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：hugohe3/ppt-master",
-        "Star 71,110 / Fork 5,545",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：Python",
-        "有正式 release，说明有发布纪律",
-        "topics：ai-agent、aippt、office、powerpoint、powerpoint-generation、ppt"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "github/github-mcp-server",
-      "url": "https://github.com/github/github-mcp-server",
-      "one_liner": "GitHub's official MCP Server",
-      "score": 54,
-      "stars": 34075,
-      "forks": 5255,
-      "days_since_push": 0,
-      "language": "Go",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：github/github-mcp-server",
-        "Star 34,075 / Fork 5,255",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：Go",
-        "有正式 release，说明有发布纪律",
-        "topics：github、mcp、mcp-server"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "casdoor/casdoor",
-      "url": "https://github.com/casdoor/casdoor",
-      "one_liner": "An open-source Agent-first Identity and Access Management (IAM) /LLM MCP & agent gateway and auth server with web UI sup",
-      "score": 54,
-      "stars": 14715,
-      "forks": 1880,
-      "days_since_push": 0,
-      "language": "Go",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：casdoor/casdoor",
-        "Star 14,715 / Fork 1,880",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：Go",
-        "有正式 release，说明有发布纪律",
-        "topics：agent、agentic-ai、agi、ai-gateway、auth、authentication"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "seleniumbase/SeleniumBase",
-      "url": "https://github.com/seleniumbase/SeleniumBase",
-      "one_liner": "📊 The best API for Web Automation, Testing, and Scraping. CDP Mode launches a stealth browser that bypasses bot-detectio",
-      "score": 54,
-      "stars": 13204,
-      "forks": 1611,
-      "days_since_push": 1,
-      "language": "Python",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
-      ],
-      "benefits": [
-        "可作为 MCP 服务接入任意客户端",
-        "提供程序化调用接口，可嵌入自有系统"
-      ],
-      "sources": [
-        "仓库：seleniumbase/SeleniumBase",
-        "Star 13,204 / Fork 1,611",
-        "最近提交：2026-10-29（1 天前）",
-        "主语言：Python",
-        "有正式 release，说明有发布纪律",
-        "topics：anti-detection、bot-detection、chromedriver、chromium、cloudflare-bypass、e2e-testing"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "ChromeDevTools/chrome-devtools-mcp",
-      "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
-      "one_liner": "Chrome DevTools for coding agents",
-      "score": 53,
-      "stars": 54476,
-      "forks": 5881,
-      "days_since_push": 0,
-      "language": "TypeScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "含专利授权，最被企业接受",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：ChromeDevTools/chrome-devtools-mcp",
-        "Star 54,476 / Fork 5,881",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：browser、chrome、chrome-devtools、debugging、devtools、mcp"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "czlonkowski/n8n-mcp",
-      "url": "https://github.com/czlonkowski/n8n-mcp",
-      "one_liner": "A MCP for Claude Desktop / Claude Code / Windsurf / Cursor to build n8n workflows for you",
-      "score": 53,
-      "stars": 23168,
-      "forks": 3677,
-      "days_since_push": 2,
-      "language": "TypeScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "许可证：宽松，可闭源商用；无明显基础设施依赖"
-      ],
-      "benefits": [
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：czlonkowski/n8n-mcp",
-        "Star 23,168 / Fork 3,677",
-        "最近提交：2026-10-27（2 天前）",
-        "主语言：TypeScript",
-        "有正式 release，说明有发布纪律",
-        "topics：mcp、mcp-server、n8n、workflows"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "budtmo/docker-android",
-      "url": "https://github.com/budtmo/docker-android",
-      "one_liner": "Android in docker solution with noVNC supported, video recording, mcp server and AI-agent",
-      "score": 53,
-      "stars": 16065,
-      "forks": 1781,
-      "days_since_push": 0,
-      "language": "Python",
-      "license_tier": "custom",
-      "license_commercial": "需人工核对",
-      "license_note": "GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文",
-      "costs": [
-        "许可证：需人工核对（noassertion）",
-        "需自建/托管：需要自己部署或购买云服务，有持续运维成本"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排",
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：budtmo/docker-android",
-        "Star 16,065 / Fork 1,781",
-        "最近提交：2026-10-30（0 天前）",
-        "主语言：Python",
-        "有正式 release，说明有发布纪律",
-        "topics：ai-agent、android、android-emulator、aws、azure、cloud"
-      ],
-      "risks": [
-        "许可证需人工核对：GitHub 标记为非标准许可证（Other），商用条款必须逐条读原文"
-      ],
-      "decision": "待核对：许可证为自定义条款（noassertion），需读原文确认商用边界"
-    },
-    {
-      "name": "DietrichGebert/ponytail",
-      "url": "https://github.com/DietrichGebert/ponytail",
-      "one_liner": "Makes your AI agent think like the laziest senior dev in the room. The best code is the code you never wrote.",
-      "score": 52,
-      "stars": 180532,
-      "forks": 9917,
-      "days_since_push": 0,
-      "language": "JavaScript",
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高"
-      ],
-      "benefits": [
-        "可支撑自主任务执行与编排"
-      ],
-      "sources": [
-        "仓库：DietrichGebert/ponytail",
-        "Star 180,532 / Fork 9,917",
-        "最近提交：2026-10-29（0 天前）",
-        "主语言：JavaScript",
-        "有正式 release，说明有发布纪律",
-        "topics：agent-skills、ai-agents、claude、claude-code、claude-code-plugin、cursor-rules"
-      ],
-      "risks": [
-        "未发现明显红线，但依赖评估仍需自行验证"
-      ],
-      "decision": "观望：作为备选，先看同赛道更高分的方案"
-    },
-    {
-      "name": "punkpeye/awesome-mcp-servers",
-      "url": "https://github.com/punkpeye/awesome-mcp-servers",
-      "one_liner": "A collection of MCP servers.",
-      "score": 52,
-      "stars": 97064,
-      "forks": 18812,
-      "days_since_push": 6,
-      "language": null,
-      "license_tier": "宽松",
-      "license_commercial": "可闭源商用",
-      "license_note": "MIT/Apache-2.0/BSD 类，商用无强制开源义务",
-      "costs": [
-        "规模：万人级项目，文档与社区资源丰富，但也意味着定制成本高",
-        "工程：无正式 release，升级需自行评估破坏性变更"
-      ],
-      "benefits": [
-        "可作为 MCP 服务接入任意客户端"
-      ],
-      "sources": [
-        "仓库：punkpeye/awesome-mcp-servers",
-        "Star 97,064 / Fork 18,812",
-        "最近提交：2026-10-23（6 天前）",
-        "topics：ai、mcp"
       ],
       "risks": [
         "未发现明显红线，但依赖评估仍需自行验证"
