@@ -22,6 +22,9 @@ env:
 jobs:
   update:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.push.outputs.changed }}
+      pushed_sha: ${{ steps.push.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
 
@@ -50,6 +53,7 @@ jobs:
         run: python3 radar/distribute.py --in data/entries.json --out out --pick 6
 
       - name: 提交
+        id: push
         if: always()
         run: |
           git config user.name  "radar-bot"
@@ -57,15 +61,21 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "无变化，跳过提交"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: 雷达清单与分发文案每日更新"
             git push origin "HEAD:${{ github.ref_name }}"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
 
-  # Pages 独立成 job：只有内容变了才重新部署，避免无谓的部署记录
+  # Pages 独立成 job：只有内容变了才重新部署，避免无谓的部署记录。
+  # 关键：checkout 必须指向本次流水线刚刚推送的提交，否则 upload-pages-artifact
+  # 会把「上一次」的内容重新发布一遍——因为 checkout 默认取的是触发时的 SHA，
+  # 而内容是在 update job 里才生成并推送的。
   deploy:
     needs: update
-    if: needs.update.result == 'success'
+    if: needs.update.result == 'success' && needs.update.outputs.changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -75,6 +85,8 @@ jobs:
       url: '${{ steps.deployment.outputs.page_url }}'
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.update.outputs.pushed_sha }}
       - uses: actions/configure-pages@v5
       - name: 上传站点
         uses: actions/upload-pages-artifact@v3
