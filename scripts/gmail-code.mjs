@@ -93,6 +93,12 @@ async function main() {
     "开放平台 newer_than:7d",
   ];
 
+  // Gmail 搜索无结果时，列表区会出现一行**占位提示**（不是邮件）：
+  //   「找不到与您的搜索匹配的邮件。请尝试使用发件人、日期和大小等搜索选项。」
+  // 之前把它当成「命中 1 行」，导致日志误报「命中但提取不到验证码」。
+  const isPlaceholder = (t) =>
+    /找不到与您的搜索匹配|没有与您的搜索匹配|No emails matched|did not match any of your search/i.test(t);
+
   for (const q of queries) {
     let rows = null;
     try {
@@ -114,7 +120,13 @@ async function main() {
       continue;
     }
     if (!rows || rows.length === 0) continue;
+    rows = rows.filter((t) => !isPlaceholder(t));
+    if (rows.length === 0) {
+      log(`  查询「${q.slice(0, 40)}」无匹配邮件`);
+      continue;
+    }
 
+    // 先从列表行（主题+摘要）里试
     for (const r of rows) {
       const code = extractCode(r);
       if (code) {
@@ -123,7 +135,33 @@ async function main() {
         return;
       }
     }
-    log(`  查询「${q.slice(0, 40)}」命中 ${rows.length} 行，但未提取到验证码`);
+
+    // 列表行通常只有主题，看不到正文里的验证码 → 打开第一封邮件读正文
+    log(`  查询「${q.slice(0, 40)}」命中 ${rows.length} 封邮件，打开正文读取验证码…`);
+    let bodyText = "";
+    try {
+      await page.evaluate(() => {
+        const tr = Array.from(document.querySelectorAll("tr")).find((el) => {
+          const t = (el.innerText || "").replace(/\s+/g, " ").trim();
+          return t && !/找不到与您的搜索匹配|没有与您的搜索匹配|No emails matched/i.test(t);
+        });
+        if (tr) tr.click();
+      });
+      await new Promise((r) => setTimeout(r, 4000));
+      bodyText = await page.evaluate(() => {
+        const el = document.querySelector("div.aT5-aG") || document.querySelector("div[role='dialog']");
+        return ((el && el.innerText) || document.body.innerText || "").replace(/\s+/g, " ");
+      });
+    } catch (e) {
+      log(`  打开邮件正文失败：${String(e).slice(0, 100)}`);
+    }
+    const bodyCode = extractCode(bodyText);
+    if (bodyCode) {
+      log(`CODE:${bodyCode}`);
+      log(`  来源：邮件正文`);
+      return;
+    }
+    log(`  查询「${q.slice(0, 40)}」命中 ${rows.length} 封邮件，但未提取到验证码`);
   }
 
   log("CODE:none");

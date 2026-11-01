@@ -105,8 +105,12 @@ const p = await page.evaluate(async (nav) => {
       draftPartyId: draft?.partyId || null,
       draftStatus: draft?.verifyStatus || null,
       draftNextAction: draft?.nextAction || null,
-      emailVerified: draft?.contactEmailVerified ?? null,
-      operatorVerified: draft?.operatorVerified ?? null,
+      governanceStatus: draft?.governanceStatus || null,
+      // ⚠️ 前端 chunk 逆向确认（2026-11-01 第 38 轮）：
+      // parties 列表里**不存在** contactEmailVerified / operatorVerified 这类字段，
+      // 可用判别字段只有 verifyStatus / governanceStatus。
+      // 这里把服务端实际返回的 key 原样带出来，便于日志排查。
+      partyKeys: list.length ? Object.keys(list[0]) : [],
     };
   } catch(e) { srv = { err: String(e).slice(0, 80) }; }
   return { pid: a?.state?.partyId || a?.partyId || null,
@@ -176,20 +180,20 @@ try:
     s = d.get('srv') or {}
     l = '已登录' if d.get('l') else '未登录'
     n = s.get('count', 0)
-    if n == 0:
-        # 主体列表为空 = 连邮箱验证码那一步都还没提交
-        stage = '未开始认证(主体列表为空)'
-    elif s.get('verifiedPartyId'):
+    if s.get('verifiedPartyId'):
         stage = '已实名(服务端已签发)'
+    elif n == 0:
+        # 主体列表为空 = 主体还没建出来。
+        # 关键顺序（前端 chunk 逆向确认）：邮箱验证码是在「创建主体」时随 POST /parties
+        # 一起提交的（body: {partyType, displayName, contactEmail, emailCode}），
+        # 也就是说**先要验证码才能建主体** → 所以 count==0 这一阶段正是用户最需要验证码的时候。
+        stage = '未开始认证(主体列表为空,等验证码)'
     else:
-        # 有 draft 主体 = 邮箱已验证，正在做人脸核身
-        ev = s.get('emailVerified')
-        stage = '邮箱已验证,待人脸核身(draft)'
-        if ev is False:
-            stage = '主体已建,邮箱未验证(draft)'
-    # needCode=1 表示「用户已建主体但邮箱尚未验证」→ 验证码邮件已发出但用户还没拿到码，
-    # 此时才去 Gmail 取码。其余阶段一律不去，避免导航抢焦点打断用户填表。
-    need = '1' if (n > 0 and not s.get('verifiedPartyId') and s.get('emailVerified') is False) else '0'
+        # 有主体但未 verified = 邮箱已通过、正在做人脸核身
+        stage = '主体已建,待人脸核身(draft)'
+    # needCode=1 = 还没实名，就该去 Gmail 取码（用户可能在等码填表）。
+    # 已实名后一律不再取码。
+    need = '0' if s.get('verifiedPartyId') else '1'
     print(f\"{l}，{stage}|{need}\")
 except Exception:
     print('解析失败|0')
@@ -206,9 +210,11 @@ except Exception:
   fi
 
   # 邮箱验证码自动获取（Gmail 已登录 imbaoye@gmail.com）。
-  # 仅在「主体已建、邮箱未验证」阶段触发 —— 即用户已点「发送验证码」并在等码。
-  # 这样既自动化了取码，又保证不会在用户填表时导航抢焦点。
-  if [ "$NEED_CODE" = "1" ] && [ -f "$ROOT/scripts/gmail-code.mjs" ]; then
+  # ⚠️ 触发时机已修正（2026-11-01 第 38 轮）：
+  #   验证码是在**创建主体**时随 POST /parties 一起提交的，
+  #   所以「主体列表为空」这一阶段正是用户最需要验证码的时候（此前逻辑完全相反 → 永远不触发）。
+  # 取码会导航 Gmail 抢焦点，故限流：每 4 轮取一次（≈100s），且码变了才打印。
+  if [ "$NEED_CODE" = "1" ] && [ -f "$ROOT/scripts/gmail-code.mjs" ] && [ $((N % 4)) -eq 1 ]; then
     CODE=$(ego-browser nodejs < "$ROOT/scripts/gmail-code.mjs" 2>&1 | grep -o 'CODE:[A-Za-z0-9]*' | head -1)
     if [ -n "$CODE" ] && [ "$CODE" != "CODE:none" ]; then
       if [ "$CODE" != "$LAST_CODE" ]; then
@@ -265,6 +271,13 @@ while [ "$(date +%s)" -lt "$DEADLINE" ]; do
       echo "=== 已提交审核，等待平台审核（这属正常，不是失败）==="
       echo "审核通过后本守护会自动完成定价 + 发布 + 推广渠道。"
       echo "下次轮询：$INTERVAL s 后"
+      sleep "$INTERVAL"
+      continue
+      ;;
+    13)
+      # 查已有资产失败（会话过期 / X-Party-Id 失效）→ 属可重试的瞬时故障，
+      # 刻意中止以避免重复上传造成重复资产，因此必须重试而不是放弃。
+      echo "查询已有资产失败（会话/X-Party-Id 失效），$INTERVAL s 后重试（已中止上传，不会产生重复资产）。"
       sleep "$INTERVAL"
       continue
       ;;

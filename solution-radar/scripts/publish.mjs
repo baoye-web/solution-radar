@@ -89,12 +89,25 @@ function log(...a) {
 // ---- 在页面上下文里调接口 -------------------------------------------------
 // 平台前端 http client 会把 {code,data,msg} 拆包，只把 data 给业务层。
 // page.fetch 拿到的是原始包裹，所以这里统一拆包并把 code 单独返回。
+//
+// ⚠️ 关键（2026-11-01 第 38 轮逆向确认）：平台前端 http client 对**每一个**请求
+// 都会注入 `X-Party-Id: <partyId>` 头（见 c_023.js 的 nc.request：
+// `o=this.partyContext.getPartyId(); if(o && !s.has("X-Party-Id")) s.set("X-Party-Id", o)`）。
+// 缺失该头 → 服务端无法定位主体 → capabilities/* 一律 403「当前用户无权访问该主体」。
+// 之前所有轮次的 403 都被归因为「未实名」，实际是**双重原因**：
+// 既没实名（无 partyId），也因为脚本压根没发这个头。
+// 修法：api() 统一注入 X-Party-Id（partyId 一旦拿到就全局生效）。
+let CURRENT_PARTY_ID = null;
+function setPartyId(id) { if (id) CURRENT_PARTY_ID = id; }
+
 async function api(page, method, url, body) {
   const opts = {
     method,
     headers: { "content-type": "application/json" },
     timeout: 30000,
   };
+  // 显式查询串里的 party_id/partyId 与头并存不冲突；头是平台前端的权威做法
+  if (CURRENT_PARTY_ID) opts.headers["X-Party-Id"] = CURRENT_PARTY_ID;
   if (body !== undefined && body !== null) opts.body = JSON.stringify(body);
   const r = await page.fetch(url, opts);
   let parsed = r.body;
@@ -137,7 +150,13 @@ async function readPartyId(page) {
         verifiedPartyId: verified?.partyId || null,
         draftPartyId: draft?.partyId || null,
         draftStatus: draft?.verifyStatus || null,
-        emailVerified: draft?.contactEmailVerified ?? null,
+        // ⚠️ 字段名说明（2026-11-01 第 38 轮逆向确认）：前端 chunk 里
+        // **不存在** contactEmailVerified / emailVerified 这类字段。
+        // parties 列表实际可用的判别字段是 verifyStatus 与 governanceStatus。
+        // 这里如实暴露服务端给了哪些 key，便于探针在运行时判断，
+        // 而不是依赖一个臆造出来的字段名（那会让「邮箱已验证」判断永远为 null）。
+        partyKeys: list.length ? Object.keys(list[0]) : [],
+        governanceStatus: draft?.governanceStatus ?? null,
       };
     });
   } catch { /* 服务端不可达时以 localStorage 为准 */ }
@@ -290,14 +309,33 @@ async function resolveCategories(page, log) {
 }
 
 // ---- 查已有资产（续跑用）-------------------------------------------------
-async function findExisting(page, name) {
+// ⚠️ 幂等性关键（2026-11-01 第 38 轮修复）：
+//   续跑逻辑依赖这个查询。若它**静默失败**（403/网络错误），主流程会以为「没有已有资产」
+//   → 重新走 init-upload → 每轮守护都创建一个**重复资产** → 平台侧多份草稿互相冲突。
+//   因此：查询失败必须**显式中止**，不能当成「没找到」。
+//   匹配口径：平台列表项同时带 name（英文技术名）与 displayName.zh（中文名），
+//   两个都要比，否则中文 display_name 的技能永远匹配不上英文 name。
+async function findExisting(page, names) {
   const r = await api(page, "POST", `${V2}/capabilities/list`, {
     page: 1,
     pageSize: 50,
     filters: [{ name: "capability_type", values: ["skill"] }],
   });
+  if (r.code !== 0) {
+    const e = new Error(`capabilities/list 失败 code=${r.code} status=${r.status} msg=${JSON.stringify(r.raw?.msg || "")}`);
+    e.fatal = true;
+    throw e;
+  }
   const items = r.data?.items || [];
-  return items.find((it) => it && (it.name === name || it.displayName?.zh === name)) || null;
+  const want = new Set((Array.isArray(names) ? names : [names]).filter(Boolean));
+  const hit = items.find((it) => it && (
+    (it.name && want.has(it.name)) ||
+    (it.displayName?.zh && want.has(it.displayName.zh)) ||
+    (it.displayName?.en && want.has(it.displayName.en)) ||
+    (it.display_name_zh && want.has(it.display_name_zh)) ||
+    (it.display_name_en && want.has(it.display_name_en))
+  ));
+  return hit || null;
 }
 
 // ---- 商户认证状态（定价前置条件）----------------------------------------
@@ -397,15 +435,23 @@ async function main() {
     log("  这是腾讯的人脸核验，无法用脚本绕过。请完成一次认证后重跑本命令。");
     process.exit(2);
   }
+  // 拿到主体后立刻生效：后续所有请求都会带上 X-Party-Id（平台前端的权威做法）
+  setPartyId(party.partyId);
   log(`  partyId: ${party.partyId}`);
 
   // 5) 续跑：按技能名找已有资产
   let asset = null;
   if (RESUME) {
+    // 用技术名 + 中英文展示名一起匹配（平台列表项带 name 与 displayName.zh/en）
+    const names = [fm.name, fm.display_name, fm.display_name_en].filter(Boolean);
     try {
-      asset = await findExisting(page, fm.name);
+      asset = await findExisting(page, names);
     } catch (e) {
-      log(`  查询已有资产失败（忽略）：${String(e).slice(0, 120)}`);
+      // 查询失败 ≠ 没有资产。若继续往下走会重新上传 → 产生重复资产。
+      // 必须中止（退出码 13），让守护脚本下一轮重试。
+      log(`  ✗ 查询已有资产失败，已中止以避免创建重复资产：${String(e.message || e).slice(0, 200)}`);
+      log("    常见原因：X-Party-Id 缺失或会话过期。修复后重跑即可（不会丢数据）。");
+      process.exit(13);
     }
   }
   if (asset) {
@@ -571,19 +617,31 @@ async function main() {
     }
   }
 
-  // 9) 建推广渠道（分享链接 + 小程序码；一次请求带两种方式）
+  // 9) 建推广渠道（分享链接 + 小程序码）
   if (PUBLISH && asset?.status === "published") {
     log("  创建推广渠道");
-    const ways = ["link", "wxacode"];
-    const r = await api(page, "POST", `${V2}/share/channels/create`, {
-      assetId,
-      capabilityType: "skill",
-      channelTag: "GitHub",
-      shareWays: ways,
-    });
-    log(`    → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 260)}`);
-    if (r.code === 0 && r.data?.wxacode?.imageUrl) {
-      log(`    小程序码：${r.data.wxacode.imageUrl}`);
+    // ⚠️ 平台前端校验（chunk 61526 反推）：
+    //   支持 wxacode 的条件 = 非 connector 且 **未付费**（payMode 0）。
+    //   TN(type, payMode) = !connector && !(payMode===1 || payMode===2)
+    //   → 本技能定价 19 元/月（payMode=2）属于**已付费**，wxacode 不被支持。
+    // 因此先按「link + wxacode」请求（对齐前端一次性提交），
+    // 若平台拒绝（code≠0），自动降级为仅 link 重试一次，保证至少拿到分享链接。
+    const tryWays = [["link", "wxacode"], ["link"]];
+    for (const ways of tryWays) {
+      const r = await api(page, "POST", `${V2}/share/channels/create`, {
+        assetId,
+        capabilityType: "skill",
+        channelTag: "GitHub",
+        shareWays: ways,
+      });
+      log(`    shareWays=${JSON.stringify(ways)} → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 240)}`);
+      if (r.code === 0) {
+        if (r.data?.wxacode?.imageUrl) log(`    小程序码：${r.data.wxacode.imageUrl}`);
+        else if (ways.length > 1) log("    ⚠️ 平台未返回小程序码（付费技能不支持 wxacode），将仅用分享链接");
+        break;
+      }
+      log(`    ✗ shareWays=${JSON.stringify(ways)} 被平台拒绝`);
+      if (ways.length === 1) log("    推广渠道创建失败（不影响技能已发布状态）");
     }
   }
 
