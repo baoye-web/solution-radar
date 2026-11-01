@@ -52,9 +52,27 @@ fi
 PROBE_MJS="$LOG_DIR/_probe_party.mjs"
 cat > "$PROBE_MJS" <<'EOF'
 const task = await taskSpace("wb-daemon-probe");
-const page = task.page("p1") || await task.newPage();
-// 免导航优先：page.goto 会抢焦点，可能打断用户在认证表单里输入身份证号。
-// tab 在进程间持久化，所以只要 origin 仍匹配就复用它，只读 localStorage + 只读接口。
+// ⚠️ 实测（2026-11-01 第 36 轮）：task.page("p1") 在没有可用标签页时
+// 不抛错也不返回 null，而是返回 truthy 句柄，错误要到使用时才抛
+// （"page label not found: p1" / "page p1 was closed"）。
+// 因此「if (!page) 才兜底」的写法是坏的 —— 兜底分支永远进不去，
+// 错误会延后到 evaluate() 才炸，守护进程把「标签页没了」误判成「还没实名认证」。
+// 正确做法：逐个候选 await p.url() 做健康检查，坏的会在此抛错，正好用来跳过。
+let page = null;
+{
+  const candidates = [];
+  try { const p = task.page("p1"); if (p) candidates.push(p); } catch {}
+  try { for (const p of (await task.pages()) || []) candidates.push(p); } catch {}
+  for (const p of candidates) {
+    try { await p.url(); page = p; break; } catch {}
+  }
+  if (!page) {
+    try { const p = await task.newPage(); await p.url(); page = p; } catch {}
+  }
+}
+if (!page) {
+  console.log("RESULT:" + JSON.stringify({ l: false, srv: { err: "no_usable_page" }, nav: "NO_PAGE" }));
+} else {
 let navErr = null;
 let cur = "";
 try { cur = await page.url(); } catch (e) {}
@@ -99,6 +117,7 @@ const p = await page.evaluate(async (nav) => {
            nav: nav || null };
 }, navErr);
 console.log("RESULT:" + JSON.stringify(p));
+}
 EOF
 
 echo "=== 现成方案雷达 · 自动接管守护进程 ==="

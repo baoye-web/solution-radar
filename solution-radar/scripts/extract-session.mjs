@@ -12,7 +12,24 @@
 import { writeFile } from "node:fs/promises";
 
 const task = await taskSpace("wb-session-extract");
-const page = task.page("p1");
+// ⚠️ 实测（2026-11-01）：task.page("p1") 在没有可用标签页时不抛错也不返回 null，
+// 而是返回 truthy 句柄，错误要到使用时才抛。所以必须逐个候选做 url() 健康检查。
+let page = null;
+{
+  const candidates = [];
+  try { const p = task.page("p1"); if (p) candidates.push(p); } catch {}
+  try { for (const p of (await task.pages()) || []) candidates.push(p); } catch {}
+  for (const p of candidates) {
+    try { await p.url(); page = p; break; } catch {}
+  }
+  if (!page) {
+    try { const p = await task.newPage(); await p.url(); page = p; } catch {}
+  }
+}
+if (!page) {
+  console.error("无法取得可用标签页（wb-session-extract 空间内无可用 page 且新建失败）");
+  process.exit(10);
+}
 
 // 先访问目标域，让它把 cookie 落到该域
 await page.goto("https://open.workbuddy.cn/");

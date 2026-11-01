@@ -45,14 +45,47 @@ function extractCode(text) {
   return null;
 }
 
+/**
+ * 取一个可用的 page。
+ *
+ * ⚠️ 实测（2026-11-01 第 36 轮）：`task.page("p1")` 在没有可用标签页时
+ * 不抛错也不返回 null，而是返回一个 truthy 句柄；错误要到第一次使用才抛
+ * （"page label not found: p1" / "page p1 was closed"）。
+ * 所以「if (!page) 才兜底」的写法是坏的 —— 兜底分支永远进不去。
+ * 正确做法：逐个候选 await p.url() 做健康检查，坏的会在此抛错，正好用来跳过。
+ */
+async function acquirePage(task) {
+  const candidates = [];
+  try {
+    const p = task.page("p1");
+    if (p) candidates.push(p);
+  } catch { /* 具名标签页不存在 */ }
+  try {
+    for (const p of (await task.pages()) || []) candidates.push(p);
+  } catch { /* 忽略 */ }
+  for (const p of candidates) {
+    try {
+      await p.url();
+      return p;
+    } catch { /* 已关闭或不存在，换下一个 */ }
+  }
+  try {
+    const p = await task.newPage();
+    await p.url();
+    return p;
+  } catch {
+    return null;
+  }
+}
+
 async function main() {
   const task = await taskSpace(MAIL_SPACE);
-  let page = null;
-  try { page = task.page("p1"); } catch { /* 标签页可能不存在 */ }
+  const page = await acquirePage(task);
   if (!page) {
-    try { page = (await task.pages())[0]; } catch { /* 忽略 */ }
+    console.log("CODE:none");
+    console.log("NO_PAGE: 空间内无可用标签页，且新建失败");
+    return;
   }
-  if (!page) page = await task.newPage();
 
   const queries = [
     "subject:(验证码 OR verification code OR 校验码) newer_than:7d",

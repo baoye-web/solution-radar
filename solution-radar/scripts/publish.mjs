@@ -193,6 +193,63 @@ function buildZip(dir, out) {
   return out;
 }
 
+/**
+ * 取一个可用的 page。
+ *
+ * ⚠️ 实测（2026-11-01，第 36 轮）踩坑：`task.page("p1")` 在空间里没有可用标签页时
+ * **不会抛错，也不会返回 null**，而是返回一个「truthy 的句柄对象」；
+ * 真正的错误要等到第一次使用它时才抛出：
+ *     Error: page label not found: p1. Managed Pages in task space 145: none.
+ *     Error: page p1 was closed
+ * 因此下面这种「看起来很稳妥」的写法其实是坏的 ——
+ *     try { page = task.page("p1"); } catch {}
+ *     if (!page) { page = (await task.pages())[0]; }   // ← 永远进不来
+ * 句柄恒为真值 → 兜底分支永不执行 → 错误延后到 page.goto() 才炸 →
+ * 顶层 main().catch 兜住 → 以退出码 9 结束，与「无 task space」的退出码撞车，
+ * 真实原因（标签页没了）被彻底掩盖。这已是连续第三次退出码撞车。
+ *
+ * 正确做法：逐个候选「用一次」来验证可用性（await p.url()），
+ * 坏的句柄在使用时会抛错，正好用来做健康检查；全都不行再 newPage()。
+ */
+async function acquirePage(task, log) {
+  const candidates = [];
+  // 1) 具名标签页 p1 —— 用 url() 验证它是否真的活着
+  try {
+    const p = task.page("p1");
+    if (p) candidates.push({ p, src: "page(p1)" });
+  } catch (e) {
+    if (log) log(`  task.page("p1") 直接抛错：${String(e).slice(0, 90)}`);
+  }
+  // 2) 空间里的其他标签页
+  try {
+    const ps = await task.pages();
+    for (const p of ps || []) candidates.push({ p, src: "pages()" });
+  } catch (e) {
+    if (log) log(`  task.pages() 抛错：${String(e).slice(0, 90)}`);
+  }
+
+  for (const c of candidates) {
+    try {
+      await c.p.url(); // 健康检查：已关闭/不存在的句柄在此抛错
+      if (log) log(`  页面来源：${c.src}`);
+      return c.p;
+    } catch (e) {
+      if (log) log(`  候选 ${c.src} 不可用：${String(e).slice(0, 80)}`);
+    }
+  }
+
+  // 3) 全部候选都不可用 → 新建标签页
+  try {
+    const p = await task.newPage();
+    await p.url();
+    if (log) log("  页面来源：newPage()");
+    return p;
+  } catch (e) {
+    if (log) log(`  newPage() 失败：${String(e).slice(0, 90)}`);
+    return null;
+  }
+}
+
 async function main() {
   log("=== 现成方案雷达 · 上架流程（浏览器上下文）===");
 
@@ -230,25 +287,24 @@ async function main() {
   }
   if (!task) {
     log("✗ 没有可用的 task space（候选均被用户接管），中止。");
-    process.exit(9);
+    process.exit(11);
   }
   log(`  使用 task space：${usedSpace}`);
 
-  // page 标签页也可能不存在，取第一页或新建
-  let page = null;
-  try { page = task.page("p1"); } catch { /* 标签页不存在 */ }
+  // page 标签页可能不存在或已关闭，取一个真正可用的（见 acquirePage 注释）
+  const page = await acquirePage(task, log);
   if (!page) {
-    try { page = (await task.pages())[0]; } catch { /* 忽略 */ }
-  }
-  if (!page) {
-    try { page = await task.newPage(); } catch (e) {
-      log(`✗ 无法取得页面：${String(e).slice(0, 120)}`);
-      process.exit(9);
-    }
+    log("✗ 无法取得可用页面（无标签页且新建失败），中止。");
+    process.exit(10);
   }
   // 导航到真实存在的开发者设置页（/developer-profile 是 404 路由，不要用）
-  await page.goto(`${BASE}/settings/developer`);
-  await new Promise((r) => setTimeout(r, 5000));
+  try {
+    await page.goto(`${BASE}/settings/developer`);
+    await new Promise((r) => setTimeout(r, 5000));
+  } catch (e) {
+    log(`✗ 打开开发者设置页失败：${String(e).slice(0, 160)}`);
+    process.exit(10);
+  }
 
   // 3) 拿 partyId（必要时轮询等待实名认证完成）
   let party = await readPartyId(page);
@@ -373,7 +429,16 @@ async function main() {
   log("审核状态查询：重新运行本脚本带 --status，或查 notifications");
 }
 
+// 退出码约定（务必互不重叠，否则会掩盖真实原因）：
+//   0  = 全部成功
+//   1  = 本地预检未通过
+//   2  = 缺少 partyId（账号未完成实名认证）—— 守护脚本依赖此码
+//   3  = 未拿到上传地址
+//   4  = 未拿到 assetId
+//   10 = 无可用页面（标签页全部关闭/新建失败）
+//   11 = 无可用 task space（候选均被用户接管）
+//   12 = 未归类异常（见下方 catch）
 main().catch((e) => {
   log("异常：" + String(e).slice(0, 300));
-  process.exit(9);
+  process.exit(12);
 });
