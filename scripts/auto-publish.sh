@@ -108,7 +108,8 @@ echo ""
 echo "需要你做一件事（一次性，约 15 分钟）："
 echo "  ✅ 浏览器里已为你打开好「个人认证」表单，且已登录（无需再扫码登录）"
 echo "     窗口标签页：WorkBuddy 开放平台 → 路径 /verification/personal"
-echo "  填 4 项：真实姓名 / 身份证号 / 手机号 / 邮箱 → 点「发送验证码」取邮箱验证码"
+echo "  填 4 项：真实姓名 / 身份证号 / 手机号 / 邮箱 → 点「发送验证码」"
+echo "  📬 邮箱验证码本脚本会自动从 Gmail 取，日志里会打印出来，直接粘贴即可"
 echo "  勾选同意条款 → 点「核验信息」→ 第 2 步「人脸识别」（用手机对着摄像头）"
 echo "  需：二代身份证 + 已实名手机号 + 能做人脸识别的手机"
 echo "  完成后本脚本自动接手直到上架发布，全程无需再操作。"
@@ -122,6 +123,7 @@ DEADLINE=$(( $(date +%s) + WAIT_TIMEOUT ))
 N=0
 PARTY=""
 LAST_STATE=""
+LAST_CODE=""
 
 while [ "$(date +%s)" -lt "$DEADLINE" ]; do
   N=$((N+1))
@@ -166,17 +168,37 @@ try:
         stage = '邮箱已验证,待人脸核身(draft)'
         if ev is False:
             stage = '主体已建,邮箱未验证(draft)'
-    print(f\"{l}，{stage}\")
+    # needCode=1 表示「用户已建主体但邮箱尚未验证」→ 验证码邮件已发出但用户还没拿到码，
+    # 此时才去 Gmail 取码。其余阶段一律不去，避免导航抢焦点打断用户填表。
+    need = '1' if (n > 0 and not s.get('verifiedPartyId') and s.get('emailVerified') is False) else '0'
+    print(f\"{l}，{stage}|{need}\")
 except Exception:
-    print('解析失败')
+    print('解析失败|0')
 " 2>/dev/null)
 
-  if [ "$STATE" != "$LAST_STATE" ]; then
-    echo "[$(date +%H:%M:%S)] 第 $N 次探测：$STATE"
-    LAST_STATE="$STATE"
+  STAGE="${STATE%%|*}"
+  NEED_CODE="${STATE##*|}"
+
+  if [ "$STAGE" != "$LAST_STATE" ]; then
+    echo "[$(date +%H:%M:%S)] 第 $N 次探测：$STAGE"
+    LAST_STATE="$STAGE"
   elif [ $((N % 8)) -eq 0 ]; then
-    echo "[$(date +%H:%M:%S)] 第 $N 次探测：仍在等待（${STATE}）"
+    echo "[$(date +%H:%M:%S)] 第 $N 次探测：仍在等待（${STAGE}）"
   fi
+
+  # 邮箱验证码自动获取（Gmail 已登录 imbaoye@gmail.com）。
+  # 仅在「主体已建、邮箱未验证」阶段触发 —— 即用户已点「发送验证码」并在等码。
+  # 这样既自动化了取码，又保证不会在用户填表时导航抢焦点。
+  if [ "$NEED_CODE" = "1" ] && [ -f "$ROOT/scripts/gmail-code.mjs" ]; then
+    CODE=$(ego-browser nodejs < "$ROOT/scripts/gmail-code.mjs" 2>&1 | grep -o 'CODE:[A-Za-z0-9]*' | head -1)
+    if [ -n "$CODE" ] && [ "$CODE" != "CODE:none" ]; then
+      if [ "$CODE" != "$LAST_CODE" ]; then
+        echo "[$(date +%H:%M:%S)] 📬 取到邮箱验证码：${CODE#CODE:}（可直接填入「邮箱验证码」输入框）"
+        LAST_CODE="$CODE"
+      fi
+    fi
+  fi
+
   sleep "$INTERVAL"
 done
 

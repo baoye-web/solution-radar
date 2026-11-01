@@ -210,8 +210,42 @@ async function main() {
   const sizeKB = (fs.statSync(ZIP_PATH).size / 1024).toFixed(1);
   log(`  打包完成：${ZIP_PATH}（${sizeKB} KB）`);
 
-  const task = await taskSpace("wb-publish");
-  const page = task.page("p1");
+  // 选取一个 agent 自有的 task space。
+  // 实测（2026-11-01）：硬编码 "wb-publish" 在该空间已被用户接管后会直接抛错
+  // 「A task space named "wb-publish" already exists and belongs to the user」，
+  // ego 进程以退出码 9 结束 —— 这会掩盖真实的认证状态。
+  // 策略：依次尝试候选空间名；某个空间若归用户所有则跳过（绝不擅自接管），
+  // 全部候选都不可用时回落到 probe 空间（agent 自有）。
+  const SPACE_CANDIDATES = ["wb-publish-auto", "wb-publish-run", "wb-daemon-probe"];
+  let task = null;
+  let usedSpace = null;
+  for (const name of SPACE_CANDIDATES) {
+    try {
+      task = await taskSpace(name);
+      usedSpace = name;
+      break;
+    } catch (e) {
+      log(`  空间 ${name} 不可用：${String(e).slice(0, 90)}`);
+    }
+  }
+  if (!task) {
+    log("✗ 没有可用的 task space（候选均被用户接管），中止。");
+    process.exit(9);
+  }
+  log(`  使用 task space：${usedSpace}`);
+
+  // page 标签页也可能不存在，取第一页或新建
+  let page = null;
+  try { page = task.page("p1"); } catch { /* 标签页不存在 */ }
+  if (!page) {
+    try { page = (await task.pages())[0]; } catch { /* 忽略 */ }
+  }
+  if (!page) {
+    try { page = await task.newPage(); } catch (e) {
+      log(`✗ 无法取得页面：${String(e).slice(0, 120)}`);
+      process.exit(9);
+    }
+  }
   // 导航到真实存在的开发者设置页（/developer-profile 是 404 路由，不要用）
   await page.goto(`${BASE}/settings/developer`);
   await new Promise((r) => setTimeout(r, 5000));
