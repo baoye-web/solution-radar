@@ -10,63 +10,58 @@
  *     POST /api/v2/open-platform/capabilities/list       → 403 {"code":100003,"msg":"当前用户无权访问该主体"}
  *   403 是「缺 party_id」，不是「未登录」——登录态有效，缺的是主体。
  *
+ * ⚠️ 请求体契约（2026-11-01 从开放平台前端 chunk 逆向确认，详见
+ *    .workbuddy/memory/openplatform-api-contracts.md）：
+ *   init-upload   → {capabilityType, fileName, fileSize, mimeType}
+ *   complete-upload→ {uploadId, assetId?}
+ *   submit        → {capabilityType, action, assetId, uploadToken, clientToken,
+ *                    fields:{common:{categories, marketCategories, payMode, payDetail, needEncrypt}}}
+ *   publish       → {visibleScope:["ALL"]}
+ *   /pay          → {capabilityType, payMode, payDetailJson:[{price, duration_days}]}
+ *   share/channels/create → {assetId, capabilityType, channelTag, shareWays:[...]}
+ *   金额单位是「分」：19 元/月 → payMode:2, payDetail:[{price:1900, duration_days:30}]
+ *
  * 用法：
  *   ego-browser nodejs < solution-radar/scripts/publish.mjs
- *   ⚠️ 不要在命令后追加参数：ego-browser nodejs 会拒绝尾随参数。
- *   参数改用配置文件传入（默认 /tmp/wb_publish_config.json）：
- *     {"submit":true,"publish":true,"price":19,"monthly":true}
- *   也可用环境变量 WB_PUBLISH_CONFIG 指定其他配置文件路径。
- *   参数含义：
- *     submit    上传后立即提交审核
- *     publish   审核通过则定价并发布（需配合 price）
- *     price     定价（元）
- *     monthly   按月订阅而非一次性买断
- *     wait      轮询等待 partyId（实名认证完成后自动继续）
+ *   ⚠️ 不要在命令后追加参数：ego-browser nodejs 会拒绝尾随参数，
+ *      且不透传环境变量（实测 process.env 只有 PATH/HOME）。
+ *      参数走配置文件，见 CONFIG_CANDIDATES。
  */
 
 const fs = require("node:fs");
 const path = require("node:path");
 
-const args = process.argv.slice(2);
-const has = (f) => args.includes(f);
-const val = (f, d) => {
-  const i = args.indexOf(f);
-  return i >= 0 && args[i + 1] ? args[i + 1] : d;
-};
-
-// 参数来源：命令行参数 或 配置文件。
-// 实测（2026-11-01）：`ego-browser nodejs` 拒绝任何尾随参数
-// （报 "accepts at most one source argument"），且不透传环境变量，
-// 因此 `ego-browser nodejs < publish.mjs -- --submit --publish ...` 这种写法
-// 必然失败，且退出码恰好是 2 —— 与「缺少 partyId」的退出码完全相同，
-// 会把真实错误掩盖成「还没实名认证」。
-// 解决办法：把参数写进配置文件，由脚本自己读取。
-// 用法：
-//   ego-browser nodejs < solution-radar/scripts/publish.mjs
-//   （可选）先写 /tmp/wb_publish_config.json：
-//     {"submit":true,"publish":true,"price":19,"monthly":true,"wait":false}
-const CFG_PATH = process.env.WB_PUBLISH_CONFIG || "/tmp/wb_publish_config.json";
+// ---- 配置来源 ------------------------------------------------------------
+// ego-browser nodejs 不透传自定义环境变量，因此只能用文件传参。
+// 第一个存在的文件生效；守护脚本写入第一个路径。
+const CONFIG_CANDIDATES = [
+  "/Users/happysir/ego/auto-income-20261030/publish-config.json",
+  "/tmp/wb_publish_config.json",
+];
 let cfg = {};
-try {
-  cfg = JSON.parse(fs.readFileSync(CFG_PATH, "utf8"));
-} catch { /* 无配置文件则全部用默认值 */ }
+for (const p of CONFIG_CANDIDATES) {
+  try {
+    cfg = JSON.parse(fs.readFileSync(p, "utf8"));
+    break;
+  } catch { /* 换下一个 */ }
+}
+const flag = (key, dflt) => (cfg[key] !== undefined ? cfg[key] : dflt);
 
-const flag = (name, key, dflt) => {
-  if (cfg[key] !== undefined) return cfg[key];
-  return dflt;
-};
-
-const SUBMIT = cfg.submit !== undefined ? !!cfg.submit : has("--submit");
-const PUBLISH = cfg.publish !== undefined ? !!cfg.publish : has("--publish");
-const PRICE = parseInt(cfg.price !== undefined ? cfg.price : val("--price", "0"), 10) || 0;
-const MONTHLY = cfg.monthly !== undefined ? !!cfg.monthly : has("--monthly");
-const WAIT = cfg.wait !== undefined ? !!cfg.wait : has("--wait");
-const WAIT_TIMEOUT = parseInt(cfg.waitTimeout !== undefined ? cfg.waitTimeout : val("--wait-timeout", "3600"), 10) * 1000;
-const INTERVAL = parseInt(cfg.interval !== undefined ? cfg.interval : val("--interval", "30"), 10) * 1000;
+const SUBMIT = !!flag("submit", true);
+const PUBLISH = !!flag("publish", true);
+const PRICE_YUAN = Number(flag("price", 19)); // 元（对外），内部按分传给平台
+const MONTHLY = !!flag("monthly", true);
+const WAIT = !!flag("wait", false);
+const WAIT_TIMEOUT = Number(flag("waitTimeout", 3600)) * 1000;
+const INTERVAL = Number(flag("interval", 30)) * 1000;
+// 幂等：按技能名查已有资产并续跑（审核通过后无需重新上传）
+const RESUME = !!flag("resume", true);
 
 const BASE = "https://open.workbuddy.cn";
 const V2 = `${BASE}/api/v2/open-platform`;
 const V1 = `${BASE}/api/v1/open-platform/charge-developer/merchant`;
+
+const MAX_ZIP_BYTES = 3145728; // 平台对 Skill 包的硬限制：3 MiB
 
 // ego-browser nodejs 走 stdin 时：process.cwd() === "/"，__dirname === "."
 // 因此必须用绝对路径定位 skill 包。优先读 WB_SKILL_DIR，其次按已知布局推断。
@@ -75,7 +70,7 @@ function resolveSkillDir() {
   const candidates = [
     process.env.WB_SKILL_DIR,
     path.join(home, "ego/auto-income-20261030/agent-radar/solution-radar"),
-    path.join(process.cwd(), "Users/happysir/ego/auto-income-20261030/agent-radar/solution-radar"),
+    path.join(home, ".workbuddy/skills/solution-radar"),
     "/Users/happysir/ego/auto-income-20261030/agent-radar/solution-radar",
   ].filter(Boolean);
   for (const c of candidates) {
@@ -91,37 +86,39 @@ function log(...a) {
   console.log(`[${new Date().toISOString().slice(11, 19)}]`, ...a);
 }
 
-// ---- 在页面上下文里调接口 ----
-async function api(page, method, path, body) {
+// ---- 在页面上下文里调接口 -------------------------------------------------
+// 平台前端 http client 会把 {code,data,msg} 拆包，只把 data 给业务层。
+// page.fetch 拿到的是原始包裹，所以这里统一拆包并把 code 单独返回。
+async function api(page, method, url, body) {
   const opts = {
     method,
     headers: { "content-type": "application/json" },
     timeout: 30000,
   };
   if (body !== undefined && body !== null) opts.body = JSON.stringify(body);
-  const r = await page.fetch(path.startsWith("http") ? path : path, opts);
+  const r = await page.fetch(url, opts);
   let parsed = r.body;
   if (typeof parsed === "string") {
     try { parsed = JSON.parse(parsed); } catch { /* 保持字符串 */ }
   }
-  return { status: r.status, body: parsed };
+  const code = parsed && typeof parsed === "object" ? parsed.code : undefined;
+  const data = parsed && typeof parsed === "object" && parsed.data !== undefined
+    ? parsed.data
+    : parsed;
+  return { status: r.status, code, data, raw: parsed };
 }
 
-// ---- 读实名认证状态 ----
+// ---- 读实名认证状态 ------------------------------------------------------
 // 优先 localStorage（前端 zustand store 的 partyId）；若为空，回落到服务端
 // GET /api/v2/open-platform/parties —— 该端点是平台官方的「主体列表」，
-// 已实名时其中会有 partyType=personal 且 verifyStatus=verified 的记录，
-// 其 partyId 才是真正被服务端签发的主体 ID。
-// 实测（2026-11-01）：用户提交邮箱验证码后，平台会先创建一条 draft 主体，
-// 人脸核身通过后才变 verified；此时若 SPA 尚未刷新 localStorage，
-// 单看 localStorage 会误判「未认证」，而 parties 列表是权威口径。
+// 已实名时其中会有 partyType=personal 且 verifyStatus=verified 的记录。
 async function readPartyId(page) {
   const local = await page.evaluate(() => {
     let auth = null;
     try { auth = JSON.parse(localStorage.getItem("workbuddy-auth") || "null"); } catch {}
     return {
-      partyId: auth?.partyId || null,
-      certMethod: auth?.certMethod || null,
+      partyId: auth?.partyId || auth?.state?.partyId || null,
+      certMethod: auth?.certMethod || auth?.state?.certMethod || null,
       loggedIn: localStorage.getItem("loggedIn") === "true",
     };
   });
@@ -140,9 +137,7 @@ async function readPartyId(page) {
         verifiedPartyId: verified?.partyId || null,
         draftPartyId: draft?.partyId || null,
         draftStatus: draft?.verifyStatus || null,
-        draftNextAction: draft?.nextAction || null,
         emailVerified: draft?.contactEmailVerified ?? null,
-        operatorVerified: draft?.operatorVerified ?? null,
       };
     });
   } catch { /* 服务端不可达时以 localStorage 为准 */ }
@@ -151,14 +146,10 @@ async function readPartyId(page) {
   return { ...local, partyId, server };
 }
 
-// ---- 本地预检（与 Python 侧规则一致，双保险）----
-function validate(dir) {
-  const errs = [];
+// ---- 本地预检（与平台前端校验规则一致，双保险）--------------------------
+function parseFrontmatter(dir) {
   const mdPath = path.join(dir, "SKILL.md");
-  if (!fs.existsSync(mdPath)) {
-    errs.push("缺少 SKILL.md");
-    return { errs, fm: {} };
-  }
+  if (!fs.existsSync(mdPath)) return { errs: ["缺少 SKILL.md"], fm: {} };
   const text = fs.readFileSync(mdPath, "utf8");
   const end = text.indexOf("\n---", 3);
   const fm = {};
@@ -168,10 +159,17 @@ function validate(dir) {
       if (m) fm[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
     }
   }
+  return { errs: [], fm };
+}
+
+function validate(dir) {
+  const { errs: fmErrs, fm } = parseFrontmatter(dir);
+  const errs = [...fmErrs];
+  // 平台《技能基础结构》文档列出的必填 frontmatter 字段
   const required = ["name", "display_name", "display_name_en", "description",
     "description_zh", "description_en", "version", "author"];
   for (const k of required) if (!fm[k]) errs.push(`frontmatter 缺必填字段：${k}`);
-
+  // 平台只接受 references / scripts / templates 三个子目录
   const allowed = new Set(["references", "scripts", "templates"]);
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.isDirectory() && !allowed.has(e.name)) errs.push(`子目录 '${e.name}' 不被平台接受`);
@@ -179,17 +177,26 @@ function validate(dir) {
   return { errs, fm };
 }
 
-// ---- 打包（平台要求：根目录 SKILL.md，子目录仅 references/scripts/templates）----
+// ---- 打包 ----------------------------------------------------------------
+// 平台按 zip 内的 entry path 定位 SKILL.md，因此包内只能是干净的相对路径。
+// 之前用 `zip -qr out <绝对路径> <相对名>` 会同时写入绝对路径与相对路径两套
+// entry（Users/happysir/... 与 references/...），entry 前缀不一致会让平台
+// 的 fileExists 校验失败。这里统一以 skill 目录为 cwd、只用相对名打包。
 function buildZip(dir, out) {
   const { execFileSync } = require("node:child_process");
-  const parts = [];
+  // 注意 zip 的两个陷阱：
+  //  1) 参数顺序：`-x` 之后的所有非选项参数都会被当成排除模式，
+  //     所以文件清单必须全部放在 `-x` 之前，否则 SKILL.md 会被误排除。
+  //  2) zip 对已存在的归档是「增量合并」而不是覆盖，
+  //     旧的绝对路径 entry 会残留并让包体积膨胀 → 每次先删旧包。
+  try { fs.unlinkSync(out); } catch { /* 不存在则忽略 */ }
+  const files = ["SKILL.md"];
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.isDirectory() && ["references", "scripts", "templates"].includes(e.name)) {
-      parts.push("-r", path.join(dir, e.name), e.name);
+      files.push(e.name);
     }
   }
-  parts.push(path.join(dir, "SKILL.md"), "SKILL.md");
-  execFileSync("zip", ["-qr", out, ...parts], { cwd: dir });
+  execFileSync("zip", ["-qr", out, ...files, "-x", "*__pycache__*", "-x", "*.pyc", "-x", ".DS_Store"], { cwd: dir });
   return out;
 }
 
@@ -213,14 +220,12 @@ function buildZip(dir, out) {
  */
 async function acquirePage(task, log) {
   const candidates = [];
-  // 1) 具名标签页 p1 —— 用 url() 验证它是否真的活着
   try {
     const p = task.page("p1");
     if (p) candidates.push({ p, src: "page(p1)" });
   } catch (e) {
     if (log) log(`  task.page("p1") 直接抛错：${String(e).slice(0, 90)}`);
   }
-  // 2) 空间里的其他标签页
   try {
     const ps = await task.pages();
     for (const p of ps || []) candidates.push({ p, src: "pages()" });
@@ -230,7 +235,7 @@ async function acquirePage(task, log) {
 
   for (const c of candidates) {
     try {
-      await c.p.url(); // 健康检查：已关闭/不存在的句柄在此抛错
+      await c.p.url();
       if (log) log(`  页面来源：${c.src}`);
       return c.p;
     } catch (e) {
@@ -238,7 +243,6 @@ async function acquirePage(task, log) {
     }
   }
 
-  // 3) 全部候选都不可用 → 新建标签页
   try {
     const p = await task.newPage();
     await p.url();
@@ -248,6 +252,68 @@ async function acquirePage(task, log) {
     if (log) log(`  newPage() 失败：${String(e).slice(0, 90)}`);
     return null;
   }
+}
+
+// ---- 分类解析 ------------------------------------------------------------
+// fields.common.categories ← 业务分类树（business-categories）的叶子节点
+// fields.common.marketCategories ← 市场分类（capabilities/categories?capabilityType=skill）
+async function resolveCategories(page, log) {
+  const biz = await api(page, "GET", `${V2}/capabilities/business-categories`);
+  const tree = biz.data?.categories || [];
+  const leaves = [];
+  const walk = (nodes) => {
+    for (const n of nodes || []) {
+      const kids = n.children || [];
+      if (kids.length) walk(kids);
+      else if (!n.qualificationRequired) leaves.push(n); // 需要资质的分类要额外交资质文件，避开
+    }
+  };
+  walk(tree);
+  const chosen = leaves[0];
+  if (!chosen) {
+    log("  ✗ 业务分类树里找不到无需资质的叶子分类");
+    return null;
+  }
+
+  const mkt = await api(page, "GET", `${V2}/capabilities/categories?capabilityType=skill`);
+  const all = mkt.data?.categories || [];
+  // configScope: 0=All 可选，1=OpsOnly 不可选
+  const selectable = all.filter((c) => c.id && (c.configScope === undefined || c.configScope === null || c.configScope === 0));
+  const marketIds = selectable.slice(0, 3).map((c) => c.id);
+  if (!marketIds.length) {
+    log("  ✗ 市场分类列表为空或全部为 OpsOnly");
+    return null;
+  }
+  log(`  业务分类：${chosen.id}（${chosen.name?.zh || chosen.id}）`);
+  log(`  市场分类：${marketIds.join(", ")}`);
+  return { categories: [{ categoryId: chosen.id }], marketCategories: marketIds };
+}
+
+// ---- 查已有资产（续跑用）-------------------------------------------------
+async function findExisting(page, name) {
+  const r = await api(page, "POST", `${V2}/capabilities/list`, {
+    page: 1,
+    pageSize: 50,
+    filters: [{ name: "capability_type", values: ["skill"] }],
+  });
+  const items = r.data?.items || [];
+  return items.find((it) => it && (it.name === name || it.displayName?.zh === name)) || null;
+}
+
+// ---- 商户认证状态（定价前置条件）----------------------------------------
+async function merchantCertStatus(page, partyId, assetId) {
+  const url = `${V1}/cert-status?partyId=${encodeURIComponent(partyId)}` +
+    (assetId ? `&resourceId=${encodeURIComponent(assetId)}` : "");
+  const r = await api(page, "GET", url);
+  const d = r.data || {};
+  return {
+    ok: r.code === 0,
+    certified: d.certified === true,
+    chargeEnabled: d.chargeEnabled === true,
+    isBlocked: d.isBlocked === true,
+    registerStatus: d.registerStatus ?? null,
+    blockReason: d.blockReason || "",
+  };
 }
 
 async function main() {
@@ -264,13 +330,14 @@ async function main() {
 
   // 2) 打包
   buildZip(SKILL_DIR, ZIP_PATH);
-  const sizeKB = (fs.statSync(ZIP_PATH).size / 1024).toFixed(1);
-  log(`  打包完成：${ZIP_PATH}（${sizeKB} KB）`);
+  const zipSize = fs.statSync(ZIP_PATH).size;
+  if (zipSize > MAX_ZIP_BYTES) {
+    log(`  ✗ zip 体积 ${(zipSize / 1048576).toFixed(2)} MiB 超过平台上限 3 MiB`);
+    process.exit(1);
+  }
+  log(`  打包完成：${ZIP_PATH}（${(zipSize / 1024).toFixed(1)} KB）`);
 
-  // 选取一个 agent 自有的 task space。
-  // 实测（2026-11-01）：硬编码 "wb-publish" 在该空间已被用户接管后会直接抛错
-  // 「A task space named "wb-publish" already exists and belongs to the user」，
-  // ego 进程以退出码 9 结束 —— 这会掩盖真实的认证状态。
+  // 3) 选取一个 agent 自有的 task space
   // 策略：依次尝试候选空间名；某个空间若归用户所有则跳过（绝不擅自接管），
   // 全部候选都不可用时回落到 probe 空间（agent 自有）。
   const SPACE_CANDIDATES = ["wb-publish-auto", "wb-publish-run", "wb-daemon-probe"];
@@ -291,13 +358,11 @@ async function main() {
   }
   log(`  使用 task space：${usedSpace}`);
 
-  // page 标签页可能不存在或已关闭，取一个真正可用的（见 acquirePage 注释）
   const page = await acquirePage(task, log);
   if (!page) {
     log("✗ 无法取得可用页面（无标签页且新建失败），中止。");
     process.exit(10);
   }
-  // 导航到真实存在的开发者设置页（/developer-profile 是 404 路由，不要用）
   try {
     await page.goto(`${BASE}/settings/developer`);
     await new Promise((r) => setTimeout(r, 5000));
@@ -306,13 +371,12 @@ async function main() {
     process.exit(10);
   }
 
-  // 3) 拿 partyId（必要时轮询等待实名认证完成）
+  // 4) 拿 partyId（必要时轮询等待实名认证完成）
   let party = await readPartyId(page);
   if (!party.partyId && WAIT) {
     const srv = party.server || {};
     log(`  未实名认证（certMethod=${party.certMethod}），轮询等待 partyId…`);
-    log(`  服务端主体列表：count=${srv.count ?? "?"}${srv.draftPartyId ? "（有 draft 主体，待人脸核身）" : "（尚未创建主体，尚未提交认证）"}`);
-    log(`  请打开 ${BASE}/settings/developer 完成实名认证（需二代身份证 + 已实名手机号 + 人脸核身）`);
+    log(`  服务端主体列表：count=${srv.count ?? "?"}`);
     const t0 = Date.now();
     let n = 0;
     while (Date.now() - t0 < WAIT_TIMEOUT) {
@@ -335,109 +399,204 @@ async function main() {
   }
   log(`  partyId: ${party.partyId}`);
 
-  // 4) 初始化上传
-  log("  [1/4] 初始化上传");
-  let r = await api(page, "POST", `${V2}/capabilities/init-upload`, {
-    name: fm.name,
-    displayName: fm.display_name,
-    version: fm.version,
-    type: "skill",
-    partyId: party.partyId,
-  });
-  log(`    → ${r.status} ${JSON.stringify(r.body).slice(0, 260)}`);
-  const d = r.body?.data || r.body || {};
-  const uploadUrl = d.uploadUrl || d.upload_url || d.url || d.ossUrl;
-  const uploadId = d.uploadId || d.upload_id || d.id;
-  if (!uploadUrl) {
-    log("    ✗ 未拿到上传地址");
-    process.exit(3);
+  // 5) 续跑：按技能名找已有资产
+  let asset = null;
+  if (RESUME) {
+    try {
+      asset = await findExisting(page, fm.name);
+    } catch (e) {
+      log(`  查询已有资产失败（忽略）：${String(e).slice(0, 120)}`);
+    }
   }
-
-  // 5) 上传文件（用 Node fetch 直传 OSS，不带平台 cookie）
-  log("  [2/4] 上传 zip");
-  const zipBuf = fs.readFileSync(ZIP_PATH);
-  const up = await fetch(uploadUrl, {
-    method: "PUT",
-    body: zipBuf,
-    headers: { "Content-Type": "application/zip", "Content-Length": String(zipBuf.length) },
-  });
-  log(`    → HTTP ${up.status}`);
-
-  // 6) 完成上传（平台开包解析 → 生成 assetId）
-  log("  [3/4] 平台解析");
-  r = await api(page, "POST", `${V2}/capabilities/complete-upload`, {
-    uploadId, name: fm.name, type: "skill", partyId: party.partyId,
-  });
-  log(`    → ${r.status} ${JSON.stringify(r.body).slice(0, 300)}`);
-  const dd = r.body?.data || r.body || {};
-  const assetId = dd.id || dd.assetId || dd.skillId || dd.capabilityId;
-  if (!assetId) {
-    log("    ✗ 未拿到 assetId");
-    process.exit(4);
-  }
-  log(`    assetId = ${assetId}`);
-
-  // 7) 提交审核
-  if (SUBMIT) {
-    log("  [4/4] 提交审核");
-    r = await api(page, "POST", `${V2}/capabilities/submit`, {
-      id: assetId, type: "skill", partyId: party.partyId, originality: true,
-    });
-    log(`    → ${r.status} ${JSON.stringify(r.body).slice(0, 300)}`);
-  }
-
-  // 8) 定价 + 发布
-  if (PUBLISH) {
-    if (PRICE <= 0) {
-      log("  未指定价格，跳过定价");
-    } else {
-      log(`  设置付费：${MONTHLY ? "按月" : "一次性"} ${PRICE} 元`);
-      r = await api(page, "POST", `${V2}/capabilities/${assetId}/pay`, {
-        payMode: MONTHLY ? 2 : 1,
-        price: PRICE,
-        payDetail: [{ price: PRICE, description: (fm.description_zh || "").slice(0, 80) }],
-        partyId: party.partyId,
-      });
-      log(`    → ${r.status} ${JSON.stringify(r.body).slice(0, 260)}`);
-      log("    ⚠️ 付费方式发布后不可更改");
-
-      log("  发布");
-      r = await api(page, "POST", `${V2}/capabilities/${assetId}/publish`, {
-        visibleScope: "public", partyId: party.partyId,
-      });
-      log(`    → ${r.status} ${JSON.stringify(r.body).slice(0, 260)}`);
+  if (asset) {
+    log(`  发现已有资产：assetId=${asset.assetId} status=${asset.status}`);
+    if (asset.status === "rejected") {
+      try {
+        const reason = await api(page, "GET", `${V2}/capabilities/${asset.assetId}/reasons`);
+        log(`  驳回原因：${JSON.stringify(reason.data).slice(0, 400)}`);
+      } catch { /* 忽略 */ }
+      log("  平台公约禁止无修改重提：请真正修改 SKILL.md 后重跑。");
+      process.exit(6);
+    }
+    if (asset.status === "under_review" || asset.status === "draft") {
+      log(`  当前状态 ${asset.status}，等待平台审核（最迟 24 小时，微信通知）。`);
+      process.exit(6);
     }
   }
 
-  // 9) 建推广渠道
-  log("  创建推广渠道");
-  for (const way of ["link", "wxacode"]) {
-    r = await api(page, "POST", `${V2}/share/channels/create`, {
-      assetId, assetType: "skill", channelTag: `GitHub-${way}`,
-      shareWay: way, channelName: fm.display_name, partyId: party.partyId,
+  let assetId = asset?.assetId || null;
+
+  // 6) 上传 + 提交审核
+  if (!assetId) {
+    log("  [1/4] 初始化上传");
+    let r = await api(page, "POST", `${V2}/capabilities/init-upload`, {
+      capabilityType: "skill",
+      fileName: path.basename(ZIP_PATH),
+      fileSize: zipSize,
+      mimeType: "application/zip",
     });
-    log(`    [${way}] → ${r.status} ${JSON.stringify(r.body).slice(0, 220)}`);
+    log(`    → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 240)}`);
+    if (r.code !== 0) {
+      log("    ✗ init-upload 被平台拒绝");
+      process.exit(5);
+    }
+    const uploadUrl = r.data?.uploadUrl;
+    const uploadId = r.data?.uploadId;
+    if (!uploadUrl || !uploadId) {
+      log("    ✗ 未拿到 uploadUrl / uploadId");
+      process.exit(3);
+    }
+
+    log("  [2/4] 直传 COS");
+    const zipBuf = fs.readFileSync(ZIP_PATH);
+    const up = await fetch(uploadUrl, {
+      method: "PUT",
+      body: zipBuf,
+      headers: { "Content-Type": "application/zip" },
+    });
+    log(`    → HTTP ${up.status}`);
+    if (up.status !== 200 && up.status !== 204) {
+      log("    ✗ COS 直传失败");
+      process.exit(5);
+    }
+
+    log("  [3/4] 平台开包解析");
+    r = await api(page, "POST", `${V2}/capabilities/complete-upload`, { uploadId });
+    log(`    → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 260)}`);
+    if (r.code !== 0) {
+      log("    ✗ complete-upload 被平台拒绝（通常是包结构或 frontmatter 不合法）");
+      process.exit(5);
+    }
+    assetId = r.data?.assetId;
+    const uploadToken = r.data?.uploadToken;
+    if (!assetId) {
+      log("    ✗ 未拿到 assetId");
+      process.exit(4);
+    }
+    log(`    assetId = ${assetId}`);
+
+    // 服务端解析结果可用于校验 frontmatter 字段名是否被平台认到
+    const parsed = r.data?.parsed;
+    const dn = parsed?.common?.displayName;
+    if (parsed) {
+      log(`    服务端解析：displayName=${JSON.stringify(dn)} version=${parsed.version ?? "?"}` +
+        ` usageExamples=${(parsed.skill?.usageExamples || []).length}`);
+      if (!dn || (!dn.zh && !dn.en)) {
+        log("    ⚠️ 服务端没解析出 displayName —— 检查 SKILL.md 的 display_name/display_name_en");
+      }
+    }
+
+    log("  [4/4] 提交审核");
+    const cat = await resolveCategories(page, log);
+    if (!cat) {
+      log("    ✗ 分类解析失败");
+      process.exit(5);
+    }
+    const cert = await merchantCertStatus(page, party.partyId, assetId);
+    const priced = PRICE_YUAN > 0 && cert.certified;
+    if (PRICE_YUAN > 0 && !cert.certified) {
+      log(`    ⚠️ 商户未认证（certified=${cert.certified} registerStatus=${cert.registerStatus}）` +
+        ` → 先按免费提交，定价需先在「变现」页完成商户认证`);
+    }
+    const payFields = priced
+      ? {
+          payMode: MONTHLY ? 2 : 1,
+          payDetail: [{
+            price: Math.round(PRICE_YUAN * 100), // 平台单位：分
+            duration_days: MONTHLY ? 30 : 0,
+          }],
+          needEncrypt: false,
+        }
+      : { payMode: 0, needEncrypt: false };
+
+    r = await api(page, "POST", `${V2}/capabilities/submit`, {
+      capabilityType: "skill",
+      action: "create",
+      assetId,
+      uploadToken,
+      clientToken: `pub_${crypto.randomUUID()}`,
+      fields: {
+        common: {
+          categories: cat.categories,
+          marketCategories: cat.marketCategories,
+          releaseNote: `v${fm.version}`,
+          ...payFields,
+        },
+      },
+    });
+    log(`    → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 300)}`);
+    if (r.code !== 0) {
+      log("    ✗ submit 被平台拒绝");
+      process.exit(5);
+    }
+    log(`    提交成功，status=${r.data?.status ?? "?"}`);
+    log("    审核最迟 24 小时（微信通知）。审核通过后重跑本脚本即可完成定价+发布+推广渠道。");
+    process.exit(6);
+  }
+
+  // 7) 已存在且已 approved → 发布
+  if (PUBLISH && asset?.status === "approved") {
+    log(`  发布（visibleScope=["ALL"]）`);
+    let r = await api(page, "POST", `${V2}/capabilities/${assetId}/publish`, {
+      visibleScope: ["ALL"],
+    });
+    log(`    → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 240)}`);
+    if (r.code !== 0) {
+      log("    ✗ publish 失败");
+      process.exit(5);
+    }
+  } else if (PUBLISH && asset?.status === "published") {
+    log("  已是 published 状态，跳过发布");
+  }
+
+  // 8) 定价（已发布技能走 /pay；与平台「修改价格」同一端点）
+  if (PUBLISH && PRICE_YUAN > 0 && asset?.status === "published") {
+    const cert = await merchantCertStatus(page, party.partyId, assetId);
+    if (!cert.certified) {
+      log(`  ⚠️ 商户未认证（certified=${cert.certified}）→ 无法设置付费：${cert.blockReason || "需先完成商户认证"}`);
+    } else {
+      log(`  设置付费：${MONTHLY ? "按月" : "一次性"} ${PRICE_YUAN} 元`);
+      const r = await api(page, "POST", `${V2}/capabilities/${assetId}/pay`, {
+        capabilityType: "skill",
+        payMode: MONTHLY ? 2 : 1,
+        payDetailJson: [{
+          price: Math.round(PRICE_YUAN * 100), // 分
+          duration_days: MONTHLY ? 30 : 0,
+        }],
+      });
+      log(`    → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 240)}`);
+      if (r.code !== 0) {
+        log("    ⚠️ 设置付费失败（可能触发年度改价配额）");
+      }
+    }
+  }
+
+  // 9) 建推广渠道（分享链接 + 小程序码；一次请求带两种方式）
+  if (PUBLISH && asset?.status === "published") {
+    log("  创建推广渠道");
+    const ways = ["link", "wxacode"];
+    const r = await api(page, "POST", `${V2}/share/channels/create`, {
+      assetId,
+      capabilityType: "skill",
+      channelTag: "GitHub",
+      shareWays: ways,
+    });
+    log(`    → ${r.status} code=${r.code} ${JSON.stringify(r.data).slice(0, 260)}`);
+    if (r.code === 0 && r.data?.wxacode?.imageUrl) {
+      log(`    小程序码：${r.data.wxacode.imageUrl}`);
+    }
   }
 
   // 10) 查收入接口（此时应为 0，但验证接口连通）
-  r = await api(page, "GET", `${V1}/income-stats?partyId=${party.partyId}`);
-  log(`  收入接口 → ${r.status} ${JSON.stringify(r.body).slice(0, 260)}`);
+  const inc = await api(page, "GET", `${V1}/income-stats?partyId=${encodeURIComponent(party.partyId)}`);
+  log(`  收入接口 → ${inc.status} code=${inc.code} ${JSON.stringify(inc.data).slice(0, 240)}`);
 
   log("");
   log("=== 完成 ===");
   log(`assetId = ${assetId}`);
-  log("审核状态查询：重新运行本脚本带 --status，或查 notifications");
+  log("审核状态查询：重新运行本脚本（自动续跑），或查开放平台通知中心");
 }
 
-// 退出码约定（务必互不重叠，否则会掩盖真实原因）：
-//   0  = 全部成功
-//   1  = 本地预检未通过
-//   2  = 缺少 partyId（账号未完成实名认证）—— 守护脚本依赖此码
-//   3  = 未拿到上传地址
-//   4  = 未拿到 assetId
-//   10 = 无可用页面（标签页全部关闭/新建失败）
-//   11 = 无可用 task space（候选均被用户接管）
-//   12 = 未归类异常（见下方 catch）
 main().catch((e) => {
   log("异常：" + String(e).slice(0, 300));
   process.exit(12);

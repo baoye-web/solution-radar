@@ -230,26 +230,64 @@ fi
 
 echo ""
 echo "=== 开始自动上架（预检 → 打包 → 上传 → 提审 → 定价 → 发布 → 推广渠道 → 收入校验）==="
-cd "$ROOT"
-# ego-browser nodejs 不接受尾随参数（也不透传环境变量），
-# 参数必须走配置文件，否则命令会以退出码 2 失败，
-# 而 2 恰好与「缺少 partyId」的退出码相同，会掩盖真实错误。
-PUB_CFG="$LOG_DIR/_publish_config.json"
+cd "$ROOT" || exit 1
+# ego-browser nodejs 不接受尾随参数，且**不透传自定义环境变量**
+# （实测 process.env 里只有 PATH/HOME），所以参数必须走「脚本自己会去读的文件」。
+# publish.mjs 的配置候选路径（按顺序取第一个存在的）：
+#   1) /Users/happysir/ego/auto-income-20261030/publish-config.json
+#   2) /tmp/wb_publish_config.json
+# 这里写第 1 个路径；注意不要再用 WB_PUBLISH_CONFIG 传参（传了也没用）。
+PUB_CFG="/Users/happysir/ego/auto-income-20261030/publish-config.json"
 cat > "$PUB_CFG" <<CFG
-{"submit":true,"publish":true,"price":${PRICE},"monthly":true}
+{"submit":true,"publish":true,"price":${PRICE},"monthly":true,"resume":true}
 CFG
-WB_PUBLISH_CONFIG="$PUB_CFG" ego-browser nodejs < solution-radar/scripts/publish.mjs
-RC=$?
 
-echo ""
-if [ $RC -eq 0 ]; then
-  echo "=== 自动接管完成 ==="
-  echo "审核结果：平台通知中心（微信最迟 24 小时返回）"
-  echo "若被驳回：需真正修改内容再重提（平台公约 2.1.2 禁止无修改重提）"
-  echo "重跑本脚本可继续定价与发布"
-else
-  echo "=== 上架流程返回码 $RC ==="
-  echo "常见原因：审核尚未通过（定价与发布会失败，这属正常）"
-  echo "审核通过后重跑本脚本即可完成发布。"
+# publish.mjs 是幂等的：按技能名查已有资产并续跑
+#   0 = 全部完成（已发布 + 定价 + 推广渠道 + 收入校验）
+#   2 = 缺 partyId（未实名）
+#   5 = 平台接口拒绝（真错误）
+#   6 = 已提交审核，等待平台审核（正常状态，不是失败）
+# 审核最长 24 小时，所以这里循环等待：审核一通过就自动完成定价+发布+推广渠道。
+PUBLISH_DONE=0
+while [ "$(date +%s)" -lt "$DEADLINE" ]; do
+  ego-browser nodejs < solution-radar/scripts/publish.mjs
+  RC=$?
+  echo ""
+  case $RC in
+    0)
+      echo "=== 自动接管完成 ==="
+      echo "审核结果：平台通知中心（微信最迟 24 小时返回）"
+      echo "若被驳回：需真正修改内容再重提（平台公约 2.1.2 禁止无修改重提）"
+      PUBLISH_DONE=1
+      break
+      ;;
+    6)
+      echo "=== 已提交审核，等待平台审核（这属正常，不是失败）==="
+      echo "审核通过后本守护会自动完成定价 + 发布 + 推广渠道。"
+      echo "下次轮询：$INTERVAL s 后"
+      sleep "$INTERVAL"
+      continue
+      ;;
+    *)
+      echo "=== 上架流程返回码 $RC ==="
+      if [ $RC -eq 2 ]; then
+        echo "缺 partyId：实名认证尚未完成（或已失效），继续等待。"
+        sleep "$INTERVAL"
+        continue
+      fi
+      if [ $RC -eq 5 ]; then
+        echo "平台接口拒绝：请检查上面的返回码与 msg（多为包结构/frontmatter/分类问题）。"
+      fi
+      echo "本轮结束，不再自动重试。"
+      break
+      ;;
+  esac
+done
+
+if [ "$PUBLISH_DONE" -eq 1 ]; then
+  exit 0
 fi
-exit $RC
+echo ""
+echo "守护结束：上架流程未走完（可能是审核仍在进行，或遇到需人工处理的错误）。"
+echo "修好后重跑：bash scripts/auto-publish.sh"
+exit 1
