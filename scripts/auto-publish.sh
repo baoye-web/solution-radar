@@ -76,9 +76,22 @@ if (!page) {
 let navErr = null;
 let cur = "";
 try { cur = await page.url(); } catch (e) {}
-if (!/open\.workbuddy\.cn/.test(cur)) {
+const onDomain = /open\.workbuddy\.cn/.test(cur);
+const onPersonal = /\/verification\/personal/.test(cur);
+if (!onDomain || (!onPersonal && /\/verification/.test(cur))) {
   try {
-    await page.goto("https://open.workbuddy.cn/verification?type=new&from=login-no-party");
+    // 直接落在「个人认证」表单页（/verification/personal），而不是 /verification?type=new
+    // 的「请选择认证方式」首屏 —— 后者只有 3 个方式按钮、0 个 input，用户还得自己再点一次
+    // 「个人认证」才能看到 姓名/身份证/手机/邮箱 四个输入框。
+    // 实测（2026-11-02 第 55 轮）：/verification/personal 直达后 input 元素数 = 5
+    // （realName/idCard/phone/email/emailCode）+ 1 checkbox，按钮为「发送验证码」「核验信息」。
+    //
+    // 判定条件（2026-11-02 第 55 轮修正）：
+    //   · 站外域名        → 导航到个人认证表单（首轮探测时标签页是 about:blank）
+    //   · 在 /verification 但不在 /verification/personal → 导航（用户停在「请选择认证方式」首屏）
+    //   · 已在 /verification/personal → **不导航**，绝不打断用户正在填的表单
+    //   · 在其它站内页面（如 /console）→ 不导航，避免把用户从别的页面拽走
+    await page.goto("https://open.workbuddy.cn/verification/personal");
   } catch (e) {
     navErr = String(e).slice(0, 160);
   }
