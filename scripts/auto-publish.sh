@@ -228,6 +228,11 @@ except Exception:
   #   所以「主体列表为空」这一阶段正是用户最需要验证码的时候（此前逻辑完全相反 → 永远不触发）。
   # 取码会导航 Gmail 抢焦点，故限流：每 4 轮取一次（≈100s），且码变了才打印。
   if [ "$NEED_CODE" = "1" ] && [ -f "$ROOT/scripts/gmail-code.mjs" ] && [ $((N % 4)) -eq 1 ]; then
+    # 取码前先确认系统代理挂在「当前生效的网络服务」上。
+    # 2026-11-02 实测故障：机器默认路由走 Ethernet(en0)，而 Clash 只把代理写到了
+    # Wi-Fi(en1) 上 → ego-browser 直连 Gmail 超时 → 取码通道静默失效。
+    # ensure-proxy.sh 会幂等地把代理补挂到当前服务；已就位时什么都不做。
+    bash "$ROOT/scripts/ensure-proxy.sh" --quiet 2>/dev/null || true
     CODE=$(ego-browser nodejs < "$ROOT/scripts/gmail-code.mjs" 2>&1 | grep -o 'CODE:[A-Za-z0-9]*' | head -1)
     if [ -n "$CODE" ] && [ "$CODE" != "CODE:none" ]; then
       if [ "$CODE" != "$LAST_CODE" ]; then
