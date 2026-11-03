@@ -22,14 +22,22 @@ API = "https://api.github.com"
 UA = "solution-radar/1.0 (+https://github.com/baoye-web)"
 
 # 许可证分类：决定能否商用，这是"决策清单"里最关键的一列
+#
+# tier 是**机器可读的规范键**（英文），全链路统一消费它：
+#   score.py   按 tier 查分值表（permissive/copyleft-strong/...）
+#   publish.py 按 tier 查展示标签与徽章配色
+#   distribute.py 按 tier 挑「可放心用」与「需注意」两组
+# 展示用的中文标签一律放在 publish.py 的 TIER_LABEL，不要混进 tier，
+# 否则下游查表全部落空（历史上「宽松」写成中文就导致 permissive 项目
+# 漏查表、被按默认 -12 计分，整档系统性少 24 分）。
 LICENSE_TIERS = {
-    "mit": ("宽松", "可闭源商用", "MIT/Apache-2.0/BSD 类，商用无强制开源义务"),
-    "apache-2.0": ("宽松", "可闭源商用", "含专利授权，最被企业接受"),
-    "bsd-3-clause": ("宽松", "可闭源商用", "BSD 三条款"),
-    "bsd-2-clause": ("宽松", "可闭源商用", "BSD 两条款"),
-    "isc": ("宽松", "可闭源商用", "ISC"),
-    "unlicense": ("宽松", "可闭源商用", "公共领域"),
-    "cc0-1.0": ("宽松", "可闭源商用", "CC0，放弃著作权"),
+    "mit": ("permissive", "可闭源商用", "MIT/Apache-2.0/BSD 类，商用无强制开源义务"),
+    "apache-2.0": ("permissive", "可闭源商用", "含专利授权，最被企业接受"),
+    "bsd-3-clause": ("permissive", "可闭源商用", "BSD 三条款"),
+    "bsd-2-clause": ("permissive", "可闭源商用", "BSD 两条款"),
+    "isc": ("permissive", "可闭源商用", "ISC"),
+    "unlicense": ("permissive", "可闭源商用", "公共领域"),
+    "cc0-1.0": ("permissive", "可闭源商用", "CC0，放弃著作权"),
     "agpl-3.0": ("copyleft-strong", "网络服务须开源", "AGPL：提供网络服务即触发开源义务，云厂商白嫖需买商业许可"),
     "gpl-3.0": ("copyleft-strong", "分发须开源", "GPL：分发衍生作品须开源"),
     "gpl-2.0": ("copyleft-strong", "分发须开源", "GPL v2"),
@@ -40,7 +48,7 @@ LICENSE_TIERS = {
     "busl-1.1": ("source-available", "商用需授权", "BUSL：生产环境使用需授权"),
     "sspl-1.0": ("source-available", "商用受限", "SSPL：服务化即视为分发"),
     "elastic-2.0": ("source-available", "商用受限", "Elastic License 2.0"),
-    "other": ("unknown", "需自行核对", "未识别或自定义许可证"),
+    "other": ("other", "需自行核对", "未识别或自定义许可证"),
 }
 
 # GitHub 用 spdx_id = "noassertion" 表示「自定义许可证」（非 SPDX 标准）。

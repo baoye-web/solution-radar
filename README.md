@@ -85,6 +85,8 @@ python3 radar/publish.py --in data/entries.json --outdir site --reports reports 
 
 **分数只用来排序，不用来替代判断。** 星标高 ≠ 适合你的场景。
 
+**选片不只按分数截断**：`score.py` 排序后会给每个红线档（source-available / 强 copyleft / 自定义 / 无许可证 / 未识别）留保底名额（每 30 条每档 1 条，最少 1 条），档内按 star 降序取——授权陷阱的危害与「有多少人会踩进去」成正比。否则宽松档会把分数拉高、把红线案例全挤出榜单，首页与订阅源就只剩「全都推荐」，而授权边界恰恰是本产品的核心卖点。
+
 ## 自动化
 
 `.github/workflows/radar-daily.yml` 每天 UTC 01:47 自动跑完整链路：采集 → 评分 → 渲染 → 生成分发文案 → 提交 → 部署 GitHub Pages。

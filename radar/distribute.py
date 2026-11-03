@@ -35,24 +35,26 @@ def fmt_num(n):
 
 def pick_diverse(entries, k):
     """挑 k 条覆盖不同能力类型的，避免内容全是同一类。"""
-    seen, out = set(), []
+    seen, out, names = set(), [], set()
     for e in entries:
         key = e["language"] or e["license_tier"]
         if key in seen:
             continue
         seen.add(key)
         out.append(e)
+        names.add(e["name"])
         if len(out) >= k:
             break
     for e in entries:
         if len(out) >= k:
             break
-        if e not in out:
+        if e["name"] not in names:
             out.append(e)
+            names.add(e["name"])
     return out
 
 
-def gen_x(entries, meta):
+def gen_x(entries, meta, pool=None):
     """X 帖文：单条聚焦一个方案，280 字内，带可点开链接。返回字符串（多帖以分隔线隔开）。"""
     date = meta.get("generated_at", "")[:10]
     out = []
@@ -69,7 +71,7 @@ def gen_x(entries, meta):
     return "\n\n---\n\n".join(out)
 
 
-def gen_zhihu(entries, meta):
+def gen_zhihu(entries, meta, pool=None):
     """知乎式长文：结构化对比，末尾放完整清单。"""
     date = meta.get("generated_at", "")[:10]
     lines = [
@@ -100,23 +102,35 @@ def gen_zhihu(entries, meta):
     return "\n".join(lines)
 
 
-def gen_xiaohongshu(entries, meta):
-    """小红书式：短标题 + 分点 + 避坑提醒。"""
+def gen_xiaohongshu(entries, meta, pool=None):
+    """小红书式：短标题 + 分点 + 避坑提醒。
+
+    对比段（⚠️ 要注意 / ✅ 放心用）取自**全量排名池** pool，而不是只取
+    被挑出来讲的那几条：这两个段落的作用是给读者「授权边界」对照，
+    必须覆盖到最值得警示的那类项目。若只看精选条目，宽松档会把分数
+    拉高、红线项目全被挤掉，这段文案就只剩好话，失去避坑价值。
+    """
     date = meta.get("generated_at", "")[:10]
+    pool = pool if pool is not None else entries
     lines = [
         f"选型踩坑｜{date} 一次说清开源方案的授权边界",
         "",
-        f"扫了 {meta.get('total_scanned', 0)} 个仓库，选出 {len(entries)} 个。",
+        f"扫了 {meta.get('total_scanned', 0)} 个仓库，挑 {len(entries)} 个说透。",
         "很多人看 star 选型，其实最容易翻车的是授权。",
         "",
     ]
-    risky = [e for e in entries if e["license_tier"] in ("copyleft-strong", "source-available", "custom", "none")][:3]
+    # 按 star 降序取：授权陷阱的危害与「有多少人会踩进去」成正比
+    risky = sorted(
+        (e for e in pool if e["license_tier"] in ("copyleft-strong", "source-available", "custom", "other", "none")),
+        key=lambda e: e["stars"], reverse=True,
+    )[:3]
     if risky:
         lines.append("⚠️ 这几个特别注意：")
         for e in risky:
             lines.append(f"· {e['name']} → {e['license_commercial']}")
         lines.append("")
-    ok = [e for e in entries if e["license_tier"] == "permissive"][:3]
+    ok = sorted((e for e in pool if e["license_tier"] == "permissive"),
+                key=lambda e: e["stars"], reverse=True)[:3]
     if ok:
         lines.append("✅ 这几个可以放心用：")
         for e in ok:
@@ -127,7 +141,7 @@ def gen_xiaohongshu(entries, meta):
     return "\n".join(lines)
 
 
-def gen_weibo(entries, meta):
+def gen_weibo(entries, meta, pool=None):
     date = meta.get("generated_at", "")[:10]
     top = entries[0]
     return (
@@ -168,7 +182,7 @@ def main():
         if p not in PLATFORMS:
             continue
         fn, ext = PLATFORMS[p]
-        content = fn(picked, meta)
+        content = fn(picked, meta, entries)
         d = os.path.join(args.out, p)
         os.makedirs(d, exist_ok=True)
         fp = os.path.join(d, f"{date}.{ext}")
@@ -186,7 +200,7 @@ def main():
             if p not in PLATFORMS:
                 continue
             fn, ext = PLATFORMS[p]
-            f.write(f"\n## {p}\n\n```\n{fn(picked, meta)}\n```\n\n")
+            f.write(f"\n## {p}\n\n```\n{fn(picked, meta, entries)}\n```\n\n")
     written.append(allp)
 
     for w in written:

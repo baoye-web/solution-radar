@@ -18,6 +18,76 @@ import os
 import sys
 import re
 import time
+from collections import Counter
+
+# ---- 许可证档位：全链路唯一的规范词表 ----
+# tier 是机器可读的键，必须在 fetch.py / score.py / publish.py / distribute.py
+# 之间完全一致。历史事故：fetch.py 把宽松档写成中文「宽松」，而本文件的分值表
+# 用英文键 permissive，于是宽松项目全部查表落空、被默认兜底 -12 计分
+# （设计值 +12，整档系统性少 24 分，占候选池七成）。
+# 两道防线：① 下面显式声明合法档位；② 遇到词表外的 tier 直接退出报错，
+# 而不是让 .get(tier, 默认值) 静默吞掉——静默吞掉正是当初 bug 活了一个月的原因。
+KNOWN_TIERS = ("permissive", "copyleft-weak", "copyleft-strong",
+               "source-available", "custom", "none", "other")
+
+# 旧版 fetch.py 拷贝产出的历史值，归一到规范键（避免旧 raw.json 让流水线整体报错）
+TIER_ALIAS = {"宽松": "permissive", "unknown": "other"}
+
+# 许可证友好度：宽松 +12 / 弱copyleft +2 / 强copyleft -10 / 需授权 -6 / 需核对 -14
+LIC_SCORE = {"permissive": 12, "copyleft-weak": 2, "copyleft-strong": -10,
+             "source-available": -6, "custom": -14, "none": -16, "other": -12}
+
+
+def normalize_tier(tier):
+    """把 tier 归一到规范键；词表外的值返回 None（调用方据此报错）。"""
+    if tier is None:
+        return None
+    tier = TIER_ALIAS.get(tier, tier)
+    return tier if tier in KNOWN_TIERS else None
+
+
+# 需要在榜单里保底的「红线档」：选型时最该被看见的授权风险。
+# 若只按分数取 top-N，修好许可证权重后宽松档会整体霸榜（分数 81+），
+# 红线档被全部挤出榜单，decision 退化成单一取值——雷达就失去了
+# 「红线优先于分数」的意义（README 与 SKILL.md 都以授权边界为核心卖点）。
+CAUTION_TIERS = ("source-available", "copyleft-strong", "custom", "none", "other")
+
+
+def select_entries(entries, limit, quota=None):
+    """按分数排序后取 limit 条，但为每个红线档保留保底名额。
+
+    红线档内按 star 降序取：授权陷阱的危害与「有多少人会踩进去」成正比，
+    197k star 的 AGPL 仓库比 200 star 的 AGPL 仓库更值得警示。
+    保底名额之外的名额仍按分数从高到低补齐。
+
+    quota 默认随 limit 缩放（每 30 条每个红线档保底 1 条，最少 1 条）：
+    60 条的订阅源 → 每档 2 条；24 张卡的首页 → 每档 1 条。
+    这样首页与订阅源都同时保留「能放心用」和「要当心」两类信息。
+    """
+    if quota is None:
+        quota = max(1, limit // 30)
+    by_tier = {}
+    for e in entries:
+        by_tier.setdefault(e["license_tier"], []).append(e)
+
+    picked, used = [], set()
+    for tier in CAUTION_TIERS:
+        pool = sorted(by_tier.get(tier, []), key=lambda e: e["stars"], reverse=True)
+        for e in pool[:quota]:
+            if len(picked) >= limit:
+                break
+            picked.append(e)
+            used.add(e["name"])
+    for e in entries:
+        if len(picked) >= limit:
+            break
+        if e["name"] not in used:
+            picked.append(e)
+            used.add(e["name"])
+
+    picked.sort(key=lambda e: e["score"], reverse=True)
+    return picked
+
 
 # ---- 维度一：成本。用什么代价换这个东西 ----
 COST_SIGNALS = [
@@ -93,9 +163,13 @@ def score_repo(repo):
     maturity = 6 if repo.get("has_releases") else 0
 
     # --- 许可证友好度：宽松 +12 / 弱copyleft +2 / 强copyleft -10 / 需授权 -6 / 需核对 -14 ---
-    tier = lic.get("tier")
-    lic_score = {"permissive": 12, "copyleft-weak": 2, "copyleft-strong": -10,
-                 "source-available": -6, "custom": -14, "none": -16, "other": -12}.get(tier, -12)
+    tier = normalize_tier(lic.get("tier"))
+    if tier is None:
+        raise ValueError(
+            f"未知许可证档位 {lic.get('tier')!r}（来自 {repo.get('full_name')}）。"
+            f"合法档位：{', '.join(KNOWN_TIERS)}。"
+        )
+    lic_score = LIC_SCORE[tier]
 
     # --- 决策价值：值类型越多，泛用性越高 ---
     value_hits = match_signals(text, VALUE_SIGNALS)
@@ -151,7 +225,7 @@ def score_repo(repo):
         risks.append(f"{label}：{desc}")
     if lic.get("needs_manual_review"):
         risks.append(f"许可证需人工核对：{lic.get('note')}")
-    if lic.get("tier") == "copyleft-strong":
+    if tier == "copyleft-strong":
         risks.append("强 copyleft：若做 SaaS 对外提供服务，须开源或购买商业许可")
     if not risks:
         risks.append("未发现明显红线，但依赖评估仍需自行验证")
@@ -227,11 +301,16 @@ def main():
 
     entries = []
     for repo in raw.get("repos", []):
-        _, e = score_repo(repo)
+        try:
+            _, e = score_repo(repo)
+        except ValueError as ex:
+            # 词表外的 tier 必须立刻失败，不能退回默认值静默算出一个错的分
+            print(f"[score] {ex}", file=sys.stderr)
+            sys.exit(4)
         entries.append(e)
 
     entries.sort(key=lambda e: e["score"], reverse=True)
-    entries = entries[: args.limit]
+    entries = select_entries(entries, args.limit)
 
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
@@ -245,6 +324,8 @@ def main():
     print(f"[score] 扫描 {raw.get('count')} → 输出 {len(entries)} 条 → {args.out}")
     top = [e for e in entries if e["score"] >= 70]
     print(f"[score] 高分(≥70) {len(top)} 条，需人工核对许可证的 {sum(1 for e in entries if e['license_tier'] in ('custom','none','other'))} 条")
+    mix = Counter(e["license_tier"] for e in entries)
+    print(f"[score] 档位构成：{dict(mix)}")
 
 
 if __name__ == "__main__":

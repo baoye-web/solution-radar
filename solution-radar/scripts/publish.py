@@ -17,8 +17,14 @@ import argparse
 import html
 import json
 import os
+import sys
 import time
 from datetime import datetime, timezone
+
+# select_entries 住在 score.py（选片规则只应有一份实现，两处各写一份必然漂移）。
+# publish.py 与 score.py 同目录，直接按脚本所在目录导入，避免依赖调用方的 cwd。
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from score import select_entries  # noqa: E402
 
 TIER_LABEL = {
     "permissive": "宽松商用",
@@ -203,7 +209,9 @@ def main():
     os.makedirs(args.reports, exist_ok=True)
 
     with open(os.path.join(args.outdir, "index.html"), "w", encoding="utf-8") as f:
-        f.write(render_html(entries[: args.limit], meta))
+        # 首页同样走分层选取：只按分数截前 N 会让宽松档霸榜、
+        # 首页一条红线案例都不剩，而授权边界正是本站的核心卖点。
+        f.write(render_html(select_entries(entries, args.limit), meta))
 
     # 订阅源：只放结构化字段，供付费 skill 拉取
     feed = {
