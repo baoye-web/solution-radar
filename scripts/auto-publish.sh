@@ -233,6 +233,12 @@ except Exception:
     # Wi-Fi(en1) 上 → ego-browser 直连 Gmail 超时 → 取码通道静默失效。
     # ensure-proxy.sh 会幂等地把代理补挂到当前服务；已就位时什么都不做。
     bash "$ROOT/scripts/ensure-proxy.sh" --quiet 2>/dev/null || true
+    # 再确认代理后端节点还活着（ensure-proxy.sh 只管「代理地址挂哪」，不管「节点死没死」）。
+    # 2026-11-05 第 53 轮实测故障：Clash global 模式下 GLOBAL 指向的日本节点上游失效，
+    # curl 走代理全部 000；存量 TCP 连接仍存活 → 旧标签页 fetch 看着正常，
+    # 但取码要新开标签页导航 Gmail → 取码静默失效、用户却在等验证码（死锁）。
+    # ensure-node.sh 会探测出口、失效时自动切到可用节点；正常时什么都不做。
+    bash "$ROOT/scripts/ensure-node.sh" --quiet 2>/dev/null || true
     CODE=$(ego-browser nodejs < "$ROOT/scripts/gmail-code.mjs" 2>&1 | grep -o 'CODE:[A-Za-z0-9]*' | head -1)
     if [ -n "$CODE" ] && [ "$CODE" != "CODE:none" ]; then
       if [ "$CODE" != "$LAST_CODE" ]; then
