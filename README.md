@@ -110,6 +110,17 @@ python3 radar/distribute.py --in data/entries.json --out out --pick 6
 
 **刻意不做的事**：不生成通用清单体（已被证实是红海），每条内容必须带可核验的具体数字。
 
+**产物位置**：CI 把文案写到 `docs/dist/`，随站点一起部署（`out/` 在 `.gitignore` 里，写那里会在 runner 上生成完就被丢弃）。
+
+| 路径 | 内容 |
+|---|---|
+| `docs/dist/index.html` | 取稿索引页，可直接打开挑选 |
+| `docs/dist/<平台>/latest.*` | **当日最新**文案，文件名固定、每天覆盖 —— 自动化取稿用这些固定地址 |
+| `docs/dist/<平台>/<日期>.*` | 历史文案，保留 14 天（`--keep-days` 可调） |
+| `docs/dist/all/latest.md` | 四平台汇总 |
+
+线上地址：`https://baoye-web.github.io/solution-radar/dist/`
+
 ### 收入通道
 
 | 通道 | 需要认证 | 说明 |

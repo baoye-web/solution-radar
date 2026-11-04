@@ -50,7 +50,10 @@ jobs:
         run: python3 radar/publish.py --in data/entries.json --outdir docs --reports reports --limit 24
 
       - name: 生成分发文案
-        run: python3 radar/distribute.py --in data/entries.json --out out --pick 6
+        # 输出到 docs/dist/ 而不是 out/：out/ 被 .gitignore 排除，
+        # 文案会在 runner 上生成完就被丢弃，仓库里什么都不会留下。
+        # 放进 docs/ 才能随站点一起部署，latest.* 提供固定取稿地址。
+        run: python3 radar/distribute.py --in data/entries.json --out docs/dist --pick 6
 
       - name: 提交
         id: push

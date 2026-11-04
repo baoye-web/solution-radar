@@ -93,6 +93,8 @@ header{{border-bottom:1px solid var(--bd);padding-bottom:24px;margin-bottom:32px
 h1{{margin:0 0 8px;font-size:26px;letter-spacing:-.02em}}
 .meta{{color:var(--mut);font-size:13px;display:flex;gap:18px;flex-wrap:wrap}}
 .meta b{{color:var(--fg);font-weight:600}}
+.meta a{{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--bd)}}
+.meta a:hover{{border-bottom-color:var(--fg)}}
 .rules{{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px 20px;margin:24px 0 32px;font-size:13.5px;box-shadow:var(--shadow)}}
 .rules h2{{font-size:14px;margin:0 0 8px;letter-spacing:.02em}}
 .rules ol{{margin:0;padding-left:20px;color:var(--mut)}}
@@ -130,6 +132,10 @@ footer code{{background:var(--card);padding:1.5px 5px;border-radius:4px;border:1
     <span>垂类：<b>{esc(topics)}</b></span>
     <span>扫描：<b>{meta.get('total_scanned', 0)}</b> 个仓库</span>
     <span>入选：<b>{len(entries)}</b> 条</span>
+  </div>
+  <div class="meta" style="margin-top:10px">
+    <span>订阅源：<a href="feed.json">feed.json</a></span>
+    <span>分发文案：<a href="dist/">dist/</a></span>
   </div>
 </header>
 <div class="rules">

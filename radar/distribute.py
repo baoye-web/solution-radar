@@ -9,6 +9,10 @@ radar/distribute.py — 内容分发层
     out/<platform>/<date>.md    平台专用文案
     out/<platform>/<date>.txt    纯文本版（X / 微博等）
     out/all/<date>.md            汇总
+    out/<platform>/latest.<ext>  当日内容的固定文件名副本
+
+「latest」副本的作用：日期文件名每天变，发布者（人或自动脚本）需要一个
+不随日期变化的固定地址去取当日文案，否则每次取稿都得先猜今天是几号。
 
 设计约束（来自实证教训）：
     · 不做 AI 批量生成的通用清单体——那已被证明是红海（卷云式图文号）
@@ -21,7 +25,7 @@ import json
 import os
 import re
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 
 def load(path):
@@ -162,12 +166,119 @@ PLATFORMS = {
 }
 
 
+PLATFORM_LABEL = {
+    "x": "X 短帖（3 条，单方案深挖）",
+    "zhihu": "知乎长文（授权边界对比 + 完整清单）",
+    "xiaohongshu": "小红书避坑向短文（别用这些 / 放心用这些）",
+    "weibo": "微博单条（当日最值得看的一个）",
+}
+
+
+def gen_index(date, meta, platforms, picked_count):
+    """分发文案索引页。样式与站点首页保持一致（同一套 CSS 变量）。"""
+    rows = []
+    for p in [x.strip() for x in platforms.split(",")]:
+        if p not in PLATFORMS:
+            continue
+        _, ext = PLATFORMS[p]
+        rows.append(
+            f'<li><a href="{p}/latest.{ext}">{esc(PLATFORM_LABEL.get(p, p))}</a>'
+            f'<span class="meta">— <code>{p}/latest.{ext}</code></span></li>'
+        )
+    topics = "、".join(meta.get("topics", [])) or "—"
+    return f"""<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>分发文案 · 现成方案雷达 · {esc(date)}</title>
+<meta name="description" content="现成方案雷达每日生成的四平台分发文案，可直接取用。">
+<style>
+:root{{--bg:#fbfbfa;--fg:#1a1a19;--mut:#6b6b68;--bd:#e3e2de;--ok:#1a7f4b;--card:#fff;--shadow:0 1px 2px rgba(0,0,0,.04)}}
+@media (prefers-color-scheme:dark){{:root{{--bg:#161615;--fg:#e8e7e3;--mut:#98978f;--bd:#2e2e2b;--ok:#5cc98d;--card:#1d1d1b;--shadow:none}}}}
+*{{box-sizing:border-box}}
+body{{margin:0;background:var(--bg);color:var(--fg);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft Yahei",sans-serif}}
+.wrap{{max-width:760px;margin:0 auto;padding:40px 20px 80px}}
+header{{border-bottom:1px solid var(--bd);padding-bottom:24px;margin-bottom:28px}}
+h1{{margin:0 0 8px;font-size:24px;letter-spacing:-.02em}}
+.meta{{color:var(--mut);font-size:13px;display:flex;gap:18px;flex-wrap:wrap}}
+.meta b{{color:var(--fg);font-weight:600}}
+.rules{{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:16px 20px;margin:0 0 28px;font-size:13.5px;box-shadow:var(--shadow)}}
+.rules h2{{font-size:14px;margin:0 0 8px}}
+.rules ol{{margin:0;padding-left:20px;color:var(--mut)}}
+.rules li{{margin:3px 0}}
+.rules b{{color:var(--fg)}}
+ul.list{{list-style:none;padding:0;margin:0}}
+ul.list li{{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;margin-bottom:10px;box-shadow:var(--shadow)}}
+ul.list a{{color:var(--fg);font-weight:600;text-decoration:none;border-bottom:1px solid transparent}}
+ul.list a:hover{{border-bottom-color:var(--fg)}}
+ul.list .meta{{margin-top:4px;font-size:12.5px}}
+code{{font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--mut)}}
+footer{{margin-top:32px;color:var(--mut);font-size:12.5px}}
+</style></head>
+<body><div class="wrap">
+<header>
+  <h1>分发文案 · {esc(date)}</h1>
+  <div class="meta">
+    <span>扫了 <b>{meta.get('total_scanned', 0)}</b> 个仓库</span>
+    <span>精选 <b>{picked_count}</b> 条</span>
+    <span>垂类 <b>{esc(topics)}</b></span>
+  </div>
+</header>
+<div class="rules">
+  <h2>取稿说明</h2>
+  <ol>
+    <li>下面每个链接指向<b>当日最新</b>文案，文件名固定（<code>latest.*</code>），每天自动覆盖 —— 自动化取稿直接用这些地址即可。</li>
+    <li>历史文案保留 <b>14 天</b>，按日期文件名访问（如 <code>{esc(date)}.md</code>）。</li>
+    <li>文案里的项目、数据、许可证结论都来自当日实采，<b>每条数字都可点开核验</b>。</li>
+  </ol>
+</div>
+<ul class="list">
+{chr(10).join(rows)}
+</ul>
+<footer>完整清单（含代价 / 收益 / 来源 / 红线四栏）：<a href="../">https://baoye-web.github.io/solution-radar/</a></footer>
+</div></body></html>
+"""
+
+
+def esc(s):
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace('"', "&quot;"))
+
+
+def prune_old(out_dir, keep_days):
+    """删掉过期的日期文件，只保留最近 keep_days 天的历史 + latest 副本。
+
+    分发目录会被部署到公开站点，每天一个日期文件会无限增长。
+    历史文案的价值随时间快速衰减（昨天的清单今天就没用了），
+    因此只保留一个短窗口。
+    """
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=keep_days)).strftime("%Y-%m-%d")
+    removed = 0
+    # all/ 汇总目录与各平台目录同样按日期堆文件，必须一起清理
+    for p in list(PLATFORMS) + ["all"]:
+        d = os.path.join(out_dir, p)
+        if not os.path.isdir(d):
+            continue
+        for fn in os.listdir(d):
+            if fn.startswith("latest."):
+                continue
+            stem = fn.rsplit(".", 1)[0]
+            # 只处理 YYYY-MM-DD.ext 形态的文件，其他一律不动
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", stem):
+                continue
+            if stem < cutoff:
+                os.remove(os.path.join(d, fn))
+                removed += 1
+    return removed
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--in", dest="inp", default="data/entries.json")
     ap.add_argument("--out", default="out")
     ap.add_argument("--pick", type=int, default=6, help="挑选条数（挑不同能力类型）")
     ap.add_argument("--platforms", default="x,zhihu,xiaohongshu,weibo")
+    ap.add_argument("--keep-days", type=int, default=14,
+                    help="保留多少天的历史文案（日期文件名），0 表示不清理")
     args = ap.parse_args()
 
     data = load(args.inp)
@@ -189,6 +300,11 @@ def main():
         with open(fp, "w", encoding="utf-8") as f:
             f.write(content)
         written.append(fp)
+        # 固定文件名副本：内容与当日文件完全一致，供自动化取稿用固定 URL
+        latest = os.path.join(d, f"latest.{ext}")
+        with open(latest, "w", encoding="utf-8") as f:
+            f.write(content)
+        written.append(latest)
 
     # 汇总
     os.makedirs(os.path.join(args.out, "all"), exist_ok=True)
@@ -202,6 +318,27 @@ def main():
             fn, ext = PLATFORMS[p]
             f.write(f"\n## {p}\n\n```\n{fn(picked, meta, entries)}\n```\n\n")
     written.append(allp)
+    all_latest = os.path.join(args.out, "all", "latest.md")
+    with open(all_latest, "w", encoding="utf-8") as f:
+        f.write(f"# {date} 分发包\n\n")
+        for p in args.platforms.split(","):
+            p = p.strip()
+            if p not in PLATFORMS:
+                continue
+            fn, ext = PLATFORMS[p]
+            f.write(f"\n## {p}\n\n```\n{fn(picked, meta, entries)}\n```\n\n")
+    written.append(all_latest)
+
+    if args.keep_days > 0:
+        removed = prune_old(args.out, args.keep_days)
+        if removed:
+            print(f"[distribute] 清理 {removed} 个过期文案文件（保留 {args.keep_days} 天）")
+
+    # 索引页：让人能直接打开看到当日可发文案，不必猜 URL
+    idx = os.path.join(args.out, "index.html")
+    with open(idx, "w", encoding="utf-8") as f:
+        f.write(gen_index(date, meta, args.platforms, len(picked)))
+    written.append(idx)
 
     for w in written:
         print(f"[distribute] {w}")
