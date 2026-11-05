@@ -1,4 +1,4 @@
-HKUDS/nanobot · 49,810★
+HKUDS/nanobot · 49,840★
 
 Your lightweight open-source personal agent.
 
@@ -9,7 +9,7 @@ Your lightweight open-source personal agent.
 
 ---
 
-maximhq/bifrost · 9,340★
+maximhq/bifrost · 9,379★
 
 Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 
@@ -20,7 +20,7 @@ Open-source, high-performance AI gateway that works as your LLM gateway, MCP gat
 
 ---
 
-thedotmack/claude-mem · 112,249★
+thedotmack/claude-mem · 113,154★
 
 Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it
 
