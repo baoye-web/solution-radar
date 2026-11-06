@@ -1,0 +1,30 @@
+HKUDS/nanobot · 49,870★
+
+Your lightweight open-source personal agent.
+
+许可证：可商用
+推荐：可直接进入评估
+
+→ https://github.com/HKUDS/nanobot
+
+---
+
+maximhq/bifrost · 9,399★
+
+Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
+
+许可证：可商用
+推荐：可直接进入评估
+
+→ https://github.com/maximhq/bifrost
+
+---
+
+thedotmack/claude-mem · 113,705★
+
+Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it
+
+许可证：可商用
+推荐：可直接进入评估
+
+→ https://github.com/thedotmack/claude-mem
