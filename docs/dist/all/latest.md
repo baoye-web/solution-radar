@@ -1,10 +1,10 @@
-# 2026-11-08 分发包
+# 2026-11-09 分发包
 
 
 ## x
 
 ```
-HKUDS/nanobot · 49,917★
+HKUDS/nanobot · 49,954★
 
 Your lightweight open-source personal agent.
 
@@ -15,7 +15,7 @@ Your lightweight open-source personal agent.
 
 ---
 
-maximhq/bifrost · 9,428★
+maximhq/bifrost · 9,446★
 
 Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 
@@ -26,7 +26,7 @@ Open-source, high-performance AI gateway that works as your LLM gateway, MCP gat
 
 ---
 
-thedotmack/claude-mem · 114,614★
+thedotmack/claude-mem · 115,087★
 
 Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it
 
@@ -40,12 +40,12 @@ Persistent Context Across Sessions for Every Agent –  Captures everything your
 ## zhihu
 
 ```
-# 2026-11-08 现成方案雷达：6 个方案的实际授权边界
+# 2026-11-09 现成方案雷达：6 个方案的实际授权边界
 
 每天扫一遍 GitHub，把每个方案的**代价、能拿到什么、证据在哪、有什么红线**列清楚。
 今天挑这 6 个说：
 
-## 1. HKUDS/nanobot（49,917★）
+## 1. HKUDS/nanobot（49,954★）
 
 Your lightweight open-source personal agent.
 
@@ -55,7 +55,7 @@ Your lightweight open-source personal agent.
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/HKUDS/nanobot
 
-## 2. maximhq/bifrost（9,428★）
+## 2. maximhq/bifrost（9,446★）
 
 Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 
@@ -65,7 +65,7 @@ Open-source, high-performance AI gateway that works as your LLM gateway, MCP gat
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/maximhq/bifrost
 
-## 3. thedotmack/claude-mem（114,614★）
+## 3. thedotmack/claude-mem（115,087★）
 
 Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it
 
@@ -75,7 +75,7 @@ Persistent Context Across Sessions for Every Agent –  Captures everything your
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/thedotmack/claude-mem
 
-## 4. xerj-org/xerj（18,594★）
+## 4. xerj-org/xerj（18,628★）
 
 AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM
 
@@ -85,7 +85,7 @@ AI search engine and MCP server for bots and agents. One Rust binary indexes cod
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/xerj-org/xerj
 
-## 5. DeusData/codebase-memory-mcp（48,315★）
+## 5. DeusData/codebase-memory-mcp（48,379★）
 
 Local code intelligence for developers and AI agents. Connect code, docs and infrastructure in a persistent graph, with 
 
@@ -95,7 +95,7 @@ Local code intelligence for developers and AI agents. Connect code, docs and inf
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/DeusData/codebase-memory-mcp
 
-## 6. firecrawl/firecrawl-mcp-server（7,777★）
+## 6. firecrawl/firecrawl-mcp-server（7,785★）
 
 Official Firecrawl MCP server, the context API for AI agents: search, scrape, and interact with the web, plus parse, cra
 
@@ -116,7 +116,7 @@ Official Firecrawl MCP server, the context API for AI agents: search, scrape, an
 ## xiaohongshu
 
 ```
-选型踩坑｜2026-11-08 一次说清开源方案的授权边界
+选型踩坑｜2026-11-09 一次说清开源方案的授权边界
 
 扫了 302 个仓库，挑 6 个说透。
 很多人看 star 选型，其实最容易翻车的是授权。
@@ -127,9 +127,9 @@ Official Firecrawl MCP server, the context API for AI agents: search, scrape, an
 · langgenius/dify → 商用受限
 
 ✅ 这几个可以放心用：
-· NousResearch/hermes-agent（261,577★）
-· msitarzewski/agency-agents（167,164★）
-· TauricResearch/TradingAgents（121,239★）
+· NousResearch/hermes-agent（261,878★）
+· msitarzewski/agency-agents（167,385★）
+· TauricResearch/TradingAgents（121,449★）
 
 完整清单（含代价/收益/证据/红线四栏）评论区自取
 https://baoye-web.github.io/solution-radar/
@@ -139,9 +139,9 @@ https://baoye-web.github.io/solution-radar/
 ## weibo
 
 ```
-2026-11-08 今日开源方案雷达（6 条）
+2026-11-09 今日开源方案雷达（6 条）
 
-最值得看：HKUDS/nanobot（49,917★）
+最值得看：HKUDS/nanobot（49,954★）
 Your lightweight open-source personal agent.
 授权：可闭源商用
 → https://github.com/HKUDS/nanobot
