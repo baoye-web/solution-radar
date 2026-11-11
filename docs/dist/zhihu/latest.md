@@ -1,9 +1,9 @@
-# 2026-11-10 现成方案雷达：6 个方案的实际授权边界
+# 2026-11-11 现成方案雷达：6 个方案的实际授权边界
 
 每天扫一遍 GitHub，把每个方案的**代价、能拿到什么、证据在哪、有什么红线**列清楚。
 今天挑这 6 个说：
 
-## 1. HKUDS/nanobot（49,989★）
+## 1. HKUDS/nanobot（50,003★）
 
 Your lightweight open-source personal agent.
 
@@ -13,7 +13,7 @@ Your lightweight open-source personal agent.
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/HKUDS/nanobot
 
-## 2. maximhq/bifrost（9,469★）
+## 2. maximhq/bifrost（9,494★）
 
 Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 
@@ -23,7 +23,7 @@ Open-source, high-performance AI gateway that works as your LLM gateway, MCP gat
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/maximhq/bifrost
 
-## 3. thedotmack/claude-mem（115,551★）
+## 3. thedotmack/claude-mem（115,972★）
 
 Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it
 
@@ -33,7 +33,7 @@ Persistent Context Across Sessions for Every Agent –  Captures everything your
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/thedotmack/claude-mem
 
-## 4. xerj-org/xerj（18,709★）
+## 4. xerj-org/xerj（18,804★）
 
 AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM
 
@@ -43,7 +43,7 @@ AI search engine and MCP server for bots and agents. One Rust binary indexes cod
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/xerj-org/xerj
 
-## 5. DeusData/codebase-memory-mcp（48,439★）
+## 5. DeusData/codebase-memory-mcp（48,471★）
 
 Local code intelligence for developers and AI agents. Connect code, docs and infrastructure in a persistent graph, with 
 
@@ -53,7 +53,7 @@ Local code intelligence for developers and AI agents. Connect code, docs and inf
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/DeusData/codebase-memory-mcp
 
-## 6. firecrawl/firecrawl-mcp-server（7,793★）
+## 6. firecrawl/firecrawl-mcp-server（7,797★）
 
 Official Firecrawl MCP server, the context API for AI agents: search, scrape, and interact with the web, plus parse, cra
 
