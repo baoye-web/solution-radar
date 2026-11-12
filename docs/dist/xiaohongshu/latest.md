@@ -1,6 +1,6 @@
-选型踩坑｜2026-11-11 一次说清开源方案的授权边界
+选型踩坑｜2026-11-12 一次说清开源方案的授权边界
 
-扫了 303 个仓库，挑 6 个说透。
+扫了 301 个仓库，挑 6 个说透。
 很多人看 star 选型，其实最容易翻车的是授权。
 
 ⚠️ 这几个特别注意：
@@ -9,9 +9,9 @@
 · langgenius/dify → 商用受限
 
 ✅ 这几个可以放心用：
-· NousResearch/hermes-agent（262,547★）
-· msitarzewski/agency-agents（167,710★）
-· TauricResearch/TradingAgents（121,922★）
+· NousResearch/hermes-agent（262,822★）
+· msitarzewski/agency-agents（167,832★）
+· TauricResearch/TradingAgents（122,183★）
 
 完整清单（含代价/收益/证据/红线四栏）评论区自取
 https://baoye-web.github.io/solution-radar/
