@@ -1,4 +1,4 @@
-HKUDS/nanobot · 50,054★
+HKUDS/nanobot · 50,071★
 
 Your lightweight open-source personal agent.
 
@@ -9,7 +9,7 @@ Your lightweight open-source personal agent.
 
 ---
 
-codewhale-hq/Codewhale · 41,176★
+codewhale-hq/Codewhale · 41,173★
 
 An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across sever
 
@@ -20,7 +20,7 @@ An open-source coding agent for your terminal, written in Rust. It works with an
 
 ---
 
-maximhq/bifrost · 9,533★
+maximhq/bifrost · 9,546★
 
 Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 

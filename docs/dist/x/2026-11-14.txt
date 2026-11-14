@@ -1,0 +1,30 @@
+HKUDS/nanobot · 50,071★
+
+Your lightweight open-source personal agent.
+
+许可证：可商用
+推荐：可直接进入评估
+
+→ https://github.com/HKUDS/nanobot
+
+---
+
+codewhale-hq/Codewhale · 41,173★
+
+An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across sever
+
+许可证：可商用
+推荐：可直接进入评估
+
+→ https://github.com/codewhale-hq/Codewhale
+
+---
+
+maximhq/bifrost · 9,546★
+
+Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
+
+许可证：可商用
+推荐：可直接进入评估
+
+→ https://github.com/maximhq/bifrost

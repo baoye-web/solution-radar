@@ -1,4 +1,4 @@
-选型踩坑｜2026-11-13 一次说清开源方案的授权边界
+选型踩坑｜2026-11-14 一次说清开源方案的授权边界
 
 扫了 300 个仓库，挑 6 个说透。
 很多人看 star 选型，其实最容易翻车的是授权。
@@ -9,9 +9,9 @@
 · langgenius/dify → 商用受限
 
 ✅ 这几个可以放心用：
-· NousResearch/hermes-agent（263,063★）
-· msitarzewski/agency-agents（168,006★）
-· TauricResearch/TradingAgents（122,374★）
+· NousResearch/hermes-agent（263,270★）
+· msitarzewski/agency-agents（168,195★）
+· TauricResearch/TradingAgents（122,490★）
 
 完整清单（含代价/收益/证据/红线四栏）评论区自取
 https://baoye-web.github.io/solution-radar/
