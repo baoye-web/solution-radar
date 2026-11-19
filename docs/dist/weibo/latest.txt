@@ -1,6 +1,6 @@
-2026-11-18 今日开源方案雷达（6 条）
+2026-11-19 今日开源方案雷达（6 条）
 
-最值得看：HKUDS/nanobot（50,167★）
+最值得看：HKUDS/nanobot（50,198★）
 Your lightweight open-source personal agent.
 授权：可闭源商用
 → https://github.com/HKUDS/nanobot

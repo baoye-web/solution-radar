@@ -1,4 +1,4 @@
-选型踩坑｜2026-11-18 一次说清开源方案的授权边界
+选型踩坑｜2026-11-19 一次说清开源方案的授权边界
 
 扫了 300 个仓库，挑 6 个说透。
 很多人看 star 选型，其实最容易翻车的是授权。
@@ -9,9 +9,9 @@
 · x1xhlol/system-prompts-and-models-of-ai-tools → 分发须开源
 
 ✅ 这几个可以放心用：
-· NousResearch/hermes-agent（264,332★）
-· msitarzewski/agency-agents（169,082★）
-· TauricResearch/TradingAgents（123,026★）
+· NousResearch/hermes-agent（264,602★）
+· msitarzewski/agency-agents（169,282★）
+· TauricResearch/TradingAgents（123,123★）
 
 完整清单（含代价/收益/证据/红线四栏）评论区自取
 https://baoye-web.github.io/solution-radar/

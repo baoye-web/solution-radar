@@ -1,9 +1,9 @@
-# 2026-11-18 现成方案雷达：6 个方案的实际授权边界
+# 2026-11-19 现成方案雷达：6 个方案的实际授权边界
 
 每天扫一遍 GitHub，把每个方案的**代价、能拿到什么、证据在哪、有什么红线**列清楚。
 今天挑这 6 个说：
 
-## 1. HKUDS/nanobot（50,167★）
+## 1. HKUDS/nanobot（50,198★）
 
 Your lightweight open-source personal agent.
 
@@ -23,7 +23,7 @@ An open-source coding agent for your terminal, written in Rust. It works with an
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/codewhale-hq/Codewhale
 
-## 3. maximhq/bifrost（9,715★）
+## 3. maximhq/bifrost（9,762★）
 
 Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 
@@ -33,7 +33,7 @@ Open-source, high-performance AI gateway that works as your LLM gateway, MCP gat
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/maximhq/bifrost
 
-## 4. thedotmack/claude-mem（118,091★）
+## 4. thedotmack/claude-mem（118,303★）
 
 Persistent Context Across Sessions for Every Agent –  Captures everything your agent does during sessions, compresses it
 
@@ -43,7 +43,7 @@ Persistent Context Across Sessions for Every Agent –  Captures everything your
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/thedotmack/claude-mem
 
-## 5. DeusData/codebase-memory-mcp（48,802★）
+## 5. DeusData/codebase-memory-mcp（48,849★）
 
 Local code intelligence for developers and AI agents. Connect code, docs and infrastructure in a persistent graph, with 
 
@@ -53,7 +53,7 @@ Local code intelligence for developers and AI agents. Connect code, docs and inf
 - **结论**：推荐：可直接进入评估
 - 链接：https://github.com/DeusData/codebase-memory-mcp
 
-## 6. firecrawl/firecrawl-mcp-server（7,851★）
+## 6. firecrawl/firecrawl-mcp-server（7,860★）
 
 Official Firecrawl MCP server, the context API for AI agents: search, scrape, and interact with the web, plus parse, cra
 

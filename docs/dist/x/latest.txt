@@ -1,4 +1,4 @@
-HKUDS/nanobot · 50,167★
+HKUDS/nanobot · 50,198★
 
 Your lightweight open-source personal agent.
 
@@ -20,7 +20,7 @@ An open-source coding agent for your terminal, written in Rust. It works with an
 
 ---
 
-maximhq/bifrost · 9,715★
+maximhq/bifrost · 9,762★
 
 Open-source, high-performance AI gateway that works as your LLM gateway, MCP gateway and agent gateway. One OpenAI-compa
 
